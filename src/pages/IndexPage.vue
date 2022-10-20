@@ -25,7 +25,12 @@
         hide-bottom
       >
         <template v-slot:top="props">
-          <q-btn color="primary" icon="add" label="添加章节" />
+          <q-btn
+            color="primary"
+            icon="add"
+            label="添加章节"
+            @click="addChapterPrompt"
+          />
           <q-btn
             flat
             round
@@ -42,18 +47,25 @@
           >
             <q-card>
               <q-card-section>
-                <header class="q-ma-none text-h4">
-                  {{ props.row.chapter }}
-                  <q-tooltip anchor="top middle" self="bottom middle">
-                    点击编辑
-                  </q-tooltip>
-                  <q-popup-edit
-                    v-model="props.row.chapter"
-                    v-slot="scope"
-                    auto-save
-                  >
-                    <q-input v-model="scope.value" dense autofocus />
-                  </q-popup-edit>
+                <header class="q-ma-none text-h4 row items-center">
+                  <q-badge class="q-mr-sm">
+                    <span class="text-subtitle1">
+                      {{ props.rowIndex + 1 }}
+                    </span>
+                  </q-badge>
+                  <span class="col-grow text-center">
+                    {{ props.row.name }}
+                    <q-tooltip anchor="top middle" self="bottom middle">
+                      点击编辑
+                    </q-tooltip>
+                    <q-popup-edit
+                      v-model="props.row.name"
+                      v-slot="scope"
+                      auto-save
+                    >
+                      <q-input v-model="scope.value" dense autofocus />
+                    </q-popup-edit>
+                  </span>
                 </header>
               </q-card-section>
 
@@ -196,35 +208,35 @@ const columns = [
 const rows = ref([
   {
     id: 1,
-    chapter: 'Frozen Yogurt',
+    name: 'Frozen Yogurt',
     stage: 0,
     lastDate: Date.now(),
     nextDate: Date.now(),
   },
   {
     id: 2,
-    chapter: 'Frozen Yogurt',
+    name: 'Frozen Yogurt',
     stage: 1,
     lastDate: Date.now(),
     nextDate: Date.now(),
   },
   {
     id: 3,
-    chapter: 'Frozen Yogurt',
+    name: 'Frozen Yogurt',
     stage: 2,
     lastDate: Date.now(),
     nextDate: Date.now(),
   },
   {
     id: 4,
-    chapter: 'Frozen Yogurt',
+    name: 'Frozen Yogurt',
     stage: 2,
     lastDate: Date.now(),
     nextDate: Date.now(),
   },
   {
     id: 5,
-    chapter: 'Frozen Yogurt',
+    name: 'Frozen Yogurt',
     stage: 2,
     lastDate: Date.now(),
     nextDate: Date.now(),
@@ -276,6 +288,42 @@ function confirmDelete(id: number) {
     })
     .onOk(() => {
       // console.log('>>>> second OK catcher')
+    })
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+}
+
+// add chapter function
+const addChapter = (name: string) => {
+  const chapter = {
+    id: Math.random(),
+    name,
+    stage: 0,
+    lastDate: Date.now(),
+    nextDate: Date.now(),
+  };
+
+  rows.value.push(chapter);
+};
+
+function addChapterPrompt() {
+  $q.dialog({
+    title: '添加章节',
+    message: '请输入章节名',
+    prompt: {
+      model: '',
+      type: 'text', // optional
+    },
+    cancel: true,
+    persistent: true,
+  })
+    .onOk((data) => {
+      // console.log('>>>> OK, received', data)
+      addChapter(data);
     })
     .onCancel(() => {
       // console.log('>>>> Cancel')
