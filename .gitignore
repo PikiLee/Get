@@ -1,5 +1,5 @@
 .vscode/
-
+.env*
 
 .DS_Store
 .thumbs.db
