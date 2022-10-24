@@ -21,6 +21,21 @@
             label="显示搁置中的课程"
           />
         </div>
+        <q-btn color="secondary" icon-right="add" label="添加新课程">
+          <q-popup-proxy>
+            <div class="q-pa-md" v-close-popup="isNewCourseNameInputOpen">
+              <q-input
+                v-model="newCourseName"
+                dense
+                autofocus
+                counter
+                label="请输入课程名"
+                @keyup.enter="addCourse"
+                :rules="[(val) => !!val || '必填']"
+              />
+            </div>
+          </q-popup-proxy>
+        </q-btn>
       </template>
       <template v-slot:item="props">
         <div class="col-xs-4">
@@ -61,7 +76,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
+import courseService from '../services/courseService';
+import { useQuasar } from 'quasar';
+
+const $q = useQuasar();
 
 const rows = [
   {
@@ -106,6 +125,36 @@ const displayOptions = reactive({
   showFinished: true,
   showArchived: true,
 });
+
+const newCourseName = ref('');
+const isNewCourseNameInputOpen = ref(0);
+const addCourse = () => {
+  if (newCourseName.value === '') return;
+
+  isNewCourseNameInputOpen.value = 1;
+  courseService
+    .postCourse({
+      name: newCourseName.value,
+      status: 1,
+    })
+    .then(() => {
+      $q.dialog({
+        title: '添加成功',
+        message: '添加成功',
+      });
+      newCourseName.value = '';
+    })
+    .catch((err) => {
+      $q.dialog({
+        title: '添加失败',
+        message: '失败原因' + err,
+      });
+    });
+
+  setTimeout(() => {
+    isNewCourseNameInputOpen.value = 0;
+  }, 500);
+};
 </script>
 
 <style scoped></style>
