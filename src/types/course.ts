@@ -8,6 +8,5 @@ export interface NewCourse {
 }
 
 export interface Course extends NewCourse {
-  id: number;
-  chapters: Chapter[];
+  id: string;
 }

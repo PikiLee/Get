@@ -2,8 +2,8 @@
   <q-page>
     <q-table
       grid
-      :rows="rows"
-      row-key="name"
+      :rows="courseStore.courses"
+      row-key="id"
       title="课程"
       hide-bottom
       card-container-class="q-col-gutter-md q-px-md"
@@ -41,8 +41,9 @@
         <div class="col-xs-4">
           <q-card :style="{ width: '100%' }">
             <q-card-section horizontal>
-              <q-img :src="props.row.image" class="col-xs-5"> </q-img>
-              <q-card-section>
+              <q-img src="https://placeimg.com/500/300/nature" class="col-xs-5">
+              </q-img>
+              <q-card-section class="col-xs-7">
                 <q-card-section>
                   <header class="relative-position text-h5">
                     {{ props.row.name }}
@@ -53,9 +54,6 @@
                       >{{ courseStatuses[props.row.status].label }}</q-badge
                     >
                   </header>
-                </q-card-section>
-                <q-card-section>
-                  <p>{{ props.row.link }}</p>
                 </q-card-section>
                 <q-card-actions class="row justify-end">
                   <q-btn
@@ -76,32 +74,18 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onBeforeMount, reactive, ref } from 'vue';
 import courseService from '../services/courseService';
 import { useQuasar } from 'quasar';
+import { useCourseStore } from 'src/stores/courseStore';
+
+const courseStore = useCourseStore();
 
 const $q = useQuasar();
 
-const rows = [
-  {
-    name: 'FUFU',
-    image: 'https://placeimg.com/500/300/nature',
-    link: 'https://quasar.dev/vue-components/img#aspect-ratio',
-    status: 0,
-  },
-  {
-    name: 'FUFU',
-    image: 'https://placeimg.com/500/300/nature',
-    link: 'https://quasar.dev/vue-components/img#aspect-ratio',
-    status: 1,
-  },
-  {
-    name: 'FUFU',
-    image: 'https://placeimg.com/500/300/nature',
-    link: 'https://quasar.dev/vue-components/img#aspect-ratio',
-    status: 2,
-  },
-];
+onBeforeMount(() => {
+  courseService.fetchCourses();
+});
 
 const courseStatuses = [
   {
@@ -135,7 +119,7 @@ const addCourse = () => {
   courseService
     .postCourse({
       name: newCourseName.value,
-      status: 1,
+      status: 0,
     })
     .then(() => {
       $q.dialog({

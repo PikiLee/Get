@@ -1,4 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
+import courseService from '../services/courseService';
 
 const routes: RouteRecordRaw[] = [
   {
