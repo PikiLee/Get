@@ -8,6 +8,7 @@ import {
   getDoc,
   doc,
   updateDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -50,8 +51,18 @@ const updateChapter = async (courseId: string, chapter: Chapter) => {
   });
 };
 
+const deleteChapter = async (courseId: string, chapterId: string) => {
+  try {
+    await deleteDoc(doc(db, 'courses', courseId, 'chapters', chapterId));
+    chapterStore.deleteChapter(chapterId);
+  } catch (err) {
+    throw err;
+  }
+};
+
 export default {
   postChapter,
   fetchChapters,
   updateChapter,
+  deleteChapter,
 };

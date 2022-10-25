@@ -10,5 +10,10 @@ export const useChapterStore = defineStore('chapter', {
     addChapter(chapter: Chapter) {
       this.chapters.push(chapter);
     },
+    deleteChapter(chapterId: string) {
+      this.chapters = this.chapters.filter(
+        (chapter) => chapter.id !== chapterId
+      );
+    },
   },
 });

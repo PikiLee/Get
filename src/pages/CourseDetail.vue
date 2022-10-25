@@ -231,20 +231,29 @@ const stages = [
   },
 ];
 
-const deleteRow = (id: number) => {
-  rows.value = rows.value.filter((row) => row.id !== id);
-};
-
-function confirmDelete(id: number) {
+function confirmDelete(chapterId: string) {
   $q.dialog({
     title: 'Confirm',
-    message: 'Would you like to turn on the wifi?',
+    message: '真的要删除该章节吗',
     cancel: true,
     persistent: true,
   })
     .onOk(() => {
       // console.log('>>>> OK')
-      deleteRow(id);
+      chapterService
+        .deleteChapter(route.params.courseId, chapterId)
+        .then(() => {
+          $q.notify({
+            message: '删除成功',
+            color: 'green',
+          });
+        })
+        .catch((err) => {
+          $q.notify({
+            message: '删除失败' + err,
+            color: 'red',
+          });
+        });
     })
     .onOk(() => {
       // console.log('>>>> second OK catcher')
