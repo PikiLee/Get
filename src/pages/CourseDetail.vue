@@ -9,166 +9,156 @@
         <time class="text-subtitle1">monday 1</time>
       </div>
     </div>
-    <q-expansion-item
-      switch-toggle-side
-      expand-separator
-      icon="perm_identity"
-      label="Computer Network"
+
+    <q-table
+      grid
+      :rows="chapterStore.chapters"
+      row-key="name"
+      :pagination="{ rowsPerPage: 0 }"
+      separator="vertical"
+      hide-bottom
     >
-      <q-table
-        grid
-        :rows="rows"
-        :columns="columns"
-        row-key="name"
-        :pagination="{ rowsPerPage: 0 }"
-        separator="vertical"
-        hide-bottom
-      >
-        <template v-slot:top="props">
-          <q-btn
-            color="primary"
-            icon="add"
-            label="添加章节"
-            @click="addChapterPrompt"
-          />
-          <q-btn
-            flat
-            round
-            dense
-            :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-            @click="props.toggleFullscreen"
-            class="q-ml-md"
-          />
-        </template>
-        <template v-slot:item="props">
-          <div
-            class="q-pa-xs col-xs-12 col-md-4 col-lg-3 grid-style-transition"
-            :style="props.selected ? 'transform: scale(0.95);' : ''"
-          >
-            <q-card>
-              <q-card-section>
-                <header class="q-ma-none text-h4 row items-center">
-                  <q-badge class="q-mr-sm">
-                    <span class="text-subtitle1">
-                      {{ props.rowIndex + 1 }}
-                    </span>
-                  </q-badge>
-                  <span class="col-grow text-center">
-                    {{ props.row.name }}
-                    <q-tooltip anchor="top middle" self="bottom middle">
-                      点击编辑
-                    </q-tooltip>
-                    <q-popup-edit
-                      v-model="props.row.name"
-                      v-slot="scope"
-                      auto-save
-                    >
-                      <q-input v-model="scope.value" dense autofocus />
-                    </q-popup-edit>
+      <template v-slot:top="props">
+        <q-btn
+          color="primary"
+          icon="add"
+          label="添加章节"
+          @click="addChapterPrompt"
+        />
+        <q-btn
+          flat
+          round
+          dense
+          :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+          @click="props.toggleFullscreen"
+          class="q-ml-md"
+        />
+      </template>
+      <template v-slot:item="props">
+        <div
+          class="q-pa-xs col-xs-12 col-md-4 col-lg-3 grid-style-transition"
+          :style="props.selected ? 'transform: scale(0.95);' : ''"
+        >
+          <q-card>
+            <q-card-section>
+              <header class="q-ma-none text-h4 row items-center">
+                <q-badge class="q-mr-sm">
+                  <span class="text-subtitle1">
+                    {{ props.rowIndex + 1 }}
                   </span>
-                </header>
+                </q-badge>
+                <span class="col-grow text-center">
+                  {{ props.row.name }}
+                  <q-tooltip anchor="top middle" self="bottom middle">
+                    点击编辑
+                  </q-tooltip>
+                  <q-popup-edit
+                    v-model="props.row.name"
+                    v-slot="scope"
+                    auto-save
+                  >
+                    <q-input v-model="scope.value" dense autofocus />
+                  </q-popup-edit>
+                </span>
+              </header>
+            </q-card-section>
+
+            <q-separator />
+
+            <div class="row justify-around items-center">
+              <q-card-section>
+                <q-badge :color="stages[props.row.stage].color">
+                  <span class="text-subtitle2">
+                    {{ stages[props.row.stage].label }}
+                  </span>
+                  <q-tooltip anchor="top middle" self="bottom middle">
+                    点击编辑
+                  </q-tooltip>
+                </q-badge>
+                <q-popup-edit
+                  v-model="props.row.stage"
+                  v-slot="scope"
+                  auto-save
+                >
+                  <q-select
+                    v-model="scope.value"
+                    :options="stages"
+                    label="进度"
+                    map-options
+                    emit-value
+                  />
+                </q-popup-edit>
               </q-card-section>
 
-              <q-separator />
+              <q-card-section>
+                <q-circular-progress
+                  rounded
+                  :value="((props.row.stage + 1) / 5) * 100"
+                  size="50px"
+                  :thickness="0.22"
+                  color="primary"
+                  track-color="grey-3"
+                  class="q-ma-md"
+                />
+              </q-card-section>
+            </div>
 
-              <div class="row justify-around items-center">
-                <q-card-section>
-                  <q-badge :color="stages[props.row.stage].color">
-                    <span class="text-subtitle2">
-                      {{ stages[props.row.stage].label }}
-                    </span>
-                    <q-tooltip anchor="top middle" self="bottom middle">
-                      点击编辑
-                    </q-tooltip>
-                  </q-badge>
-                  <q-popup-edit
-                    v-model="props.row.stage"
-                    v-slot="scope"
-                    auto-save
-                  >
-                    <q-select
-                      v-model="scope.value"
-                      :options="stages"
-                      label="进度"
-                      map-options
-                      emit-value
-                    />
-                  </q-popup-edit>
-                </q-card-section>
-
-                <q-card-section>
-                  <q-circular-progress
-                    rounded
-                    :value="((props.row.stage + 1) / 5) * 100"
-                    size="50px"
-                    :thickness="0.22"
-                    color="primary"
-                    track-color="grey-3"
-                    class="q-ma-md"
-                  />
-                </q-card-section>
-              </div>
-
-              <div class="row justify-around items-center">
-                <q-card-section>
-                  <p class="q-ma-none">
-                    {{ date.formatDate(props.row.lastDate, 'YYYY-MM-DD') }}
-                    <q-tooltip anchor="top middle" self="bottom middle">
-                      点击编辑
-                    </q-tooltip>
-                  </p>
-                  <q-popup-edit
-                    v-model="props.row.lastDate"
-                    v-slot="scope"
-                    auto-save
-                  >
-                    <q-date v-model="scope.value" />
-                  </q-popup-edit>
-                </q-card-section>
-
-                <q-card-section>
-                  {{ date.formatDate(props.row.nextDate, 'YYYY-MM-DD') }}
-                </q-card-section>
-              </div>
-
-              <q-separator />
-
-              <q-card-actions>
-                <div
-                  class="row justify-center items-center"
-                  :style="{ width: '100%' }"
+            <div class="row justify-around items-center">
+              <q-card-section>
+                <p class="q-ma-none">
+                  {{ date.formatDate(props.row.lastDate, 'YYYY-MM-DD') }}
+                  <q-tooltip anchor="top middle" self="bottom middle">
+                    点击编辑
+                  </q-tooltip>
+                </p>
+                <q-popup-edit
+                  v-model="props.row.lastDate"
+                  v-slot="scope"
+                  auto-save
                 >
-                  <q-btn
-                    flat
-                    color="negative"
-                    icon="delete"
-                    @click="confirmDelete(props.row.id)"
-                  />
-                </div>
-              </q-card-actions>
-            </q-card>
-          </div>
-        </template>
-      </q-table>
+                  <q-date v-model="scope.value" />
+                </q-popup-edit>
+              </q-card-section>
 
-      <!-- <q-circular-progress
-              rounded
-              :value="75"
-              size="50px"
-              :thickness="0.22"
-              color="primary"
-              track-color="grey-3"
-              class="q-ma-md"
-            /> -->
-    </q-expansion-item>
+              <q-card-section>
+                {{ date.formatDate(props.row.nextDate, 'YYYY-MM-DD') }}
+              </q-card-section>
+            </div>
+
+            <q-separator />
+
+            <q-card-actions>
+              <div
+                class="row justify-center items-center"
+                :style="{ width: '100%' }"
+              >
+                <q-btn
+                  flat
+                  color="negative"
+                  icon="delete"
+                  @click="confirmDelete(props.row.id)"
+                />
+              </div>
+            </q-card-actions>
+          </q-card>
+        </div>
+      </template>
+    </q-table>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { date, useQuasar } from 'quasar';
-import { ref } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
+import chapterService from 'src/services/chapterService';
+import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { useChapterStore } from './../stores/chapterStore';
+
+const route = useRoute();
 
 const $q = useQuasar();
+
+const chapterStore = useChapterStore();
 
 const columns = [
   {
@@ -205,43 +195,13 @@ const columns = [
   },
 ];
 
-const rows = ref([
-  {
-    id: 1,
-    name: 'Frozen Yogurt',
-    stage: 0,
-    lastDate: Date.now(),
-    nextDate: Date.now(),
-  },
-  {
-    id: 2,
-    name: 'Frozen Yogurt',
-    stage: 1,
-    lastDate: Date.now(),
-    nextDate: Date.now(),
-  },
-  {
-    id: 3,
-    name: 'Frozen Yogurt',
-    stage: 2,
-    lastDate: Date.now(),
-    nextDate: Date.now(),
-  },
-  {
-    id: 4,
-    name: 'Frozen Yogurt',
-    stage: 2,
-    lastDate: Date.now(),
-    nextDate: Date.now(),
-  },
-  {
-    id: 5,
-    name: 'Frozen Yogurt',
-    stage: 2,
-    lastDate: Date.now(),
-    nextDate: Date.now(),
-  },
-]);
+onBeforeMount(() => {
+  chapterService.fetchChapters(route.params.courseId);
+});
+
+onBeforeRouteUpdate(() => {
+  chapterService.fetchChapters(route.params.courseId);
+});
 
 const stages = [
   {
@@ -297,41 +257,48 @@ function confirmDelete(id: number) {
     });
 }
 
-// add chapter function
-const addChapter = (name: string) => {
-  const chapter = {
-    id: Math.random(),
-    name,
-    stage: 0,
-    lastDate: Date.now(),
-    nextDate: Date.now(),
-  };
-
-  rows.value.push(chapter);
-};
-
 function addChapterPrompt() {
   $q.dialog({
     title: '添加章节',
     message: '请输入章节名',
     prompt: {
       model: '',
+      isValid: (val) => val.length > 0, // << here is the magic
       type: 'text', // optional
     },
     cancel: true,
     persistent: true,
-  })
-    .onOk((data) => {
-      // console.log('>>>> OK, received', data)
-      addChapter(data);
-    })
-    .onCancel(() => {
-      // console.log('>>>> Cancel')
-    })
-    .onDismiss(() => {
-      // console.log('I am triggered on both OK and Cancel')
-    });
+  }).onOk((data) => {
+    // console.log('>>>> OK, received', data)
+    const courseId = route.params.courseId;
+    chapterService
+      .postChapter(courseId, {
+        name: data,
+        stage: 0,
+        lastDate: Date.now(),
+      })
+      .then(() => {
+        $q.dialog({
+          title: '添加成功',
+          message: '添加成功',
+        });
+      })
+      .catch((err) => {
+        $q.dialog({
+          title: '添加失败',
+          message: '失败原因' + err,
+        });
+      });
+  });
 }
+
+chapterStore.$subscribe((mutation) => {
+  chapterService.updateChapter(route.params.courseId, mutation.events.target);
+});
+
+// watch(() =>  chapterStore.$state.chapters, (chapters) => {
+
+// })
 </script>
 
 <style lang="scss" scoped>

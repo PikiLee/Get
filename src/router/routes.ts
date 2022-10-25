@@ -1,11 +1,17 @@
 import { RouteRecordRaw } from 'vue-router';
-import courseService from '../services/courseService';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [
+      { path: '', component: () => import('pages/IndexPage.vue') },
+      {
+        path: 'course/:courseId',
+        component: () => import('pages/CourseDetail.vue'),
+        name: 'course',
+      },
+    ],
   },
 
   // Always leave this as last one,

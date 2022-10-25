@@ -62,6 +62,7 @@
                     text-color="primary"
                     round
                     icon="east"
+                    @click="navToCourse(props.row.id)"
                   />
                 </q-card-actions>
               </q-card-section>
@@ -78,6 +79,9 @@ import { onBeforeMount, reactive, ref } from 'vue';
 import courseService from '../services/courseService';
 import { useQuasar } from 'quasar';
 import { useCourseStore } from 'src/stores/courseStore';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const courseStore = useCourseStore();
 
@@ -138,6 +142,10 @@ const addCourse = () => {
   setTimeout(() => {
     isNewCourseNameInputOpen.value = 0;
   }, 500);
+};
+
+const navToCourse = (courseId: number) => {
+  router.push({ name: 'course', params: { courseId } });
 };
 </script>
 

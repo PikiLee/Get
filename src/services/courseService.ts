@@ -13,7 +13,7 @@ const fetchCourses = async () => {
     const courses: Course[] = [];
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
-      courses.push({ ...doc.data(), id: doc.id });
+      courses.push({ ...doc.data(), id: doc.id } as Course);
     });
     courseStore.courses = courses;
   } catch (err) {
