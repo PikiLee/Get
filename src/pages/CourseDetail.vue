@@ -1,15 +1,5 @@
 <template>
   <q-page class="">
-    <div class="relative-position">
-      <q-img src="../assets/bg/book.jpg" height="15rem" />
-      <div
-        class="row no-wrap text-white justify-between absolute-bottom q-pa-sm"
-      >
-        <h2 class="text-h6 q-ma-none">我的世界</h2>
-        <time class="text-subtitle1">monday 1</time>
-      </div>
-    </div>
-
     <q-table
       grid
       :rows="chapterStore.chapters"
@@ -18,28 +8,23 @@
       separator="vertical"
       hide-bottom
     >
-      <template v-slot:top="props">
+      <!-- Table Top -->
+      <template v-slot:top>
         <q-btn
           color="primary"
           icon="add"
           label="添加章节"
           @click="addChapterPrompt"
         />
-        <q-btn
-          flat
-          round
-          dense
-          :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-          @click="props.toggleFullscreen"
-          class="q-ml-md"
-        />
       </template>
+      <!-- Table Card -->
       <template v-slot:item="props">
         <div
           class="q-pa-xs col-xs-12 col-md-4 col-lg-3 grid-style-transition"
           :style="props.selected ? 'transform: scale(0.95);' : ''"
         >
           <q-card>
+            <!-- Title -->
             <q-card-section>
               <header class="q-ma-none text-h4 row items-center">
                 <q-badge class="q-mr-sm">
@@ -65,6 +50,7 @@
 
             <q-separator />
 
+            <!-- Stage -->
             <div class="row justify-around items-center">
               <q-card-section>
                 <q-badge :color="stages[props.row.stage].color">
@@ -86,10 +72,12 @@
                     label="进度"
                     map-options
                     emit-value
-                  />
+                  >
+                  </q-select>
                 </q-popup-edit>
               </q-card-section>
 
+              <!-- Circular Progress -->
               <q-card-section>
                 <q-circular-progress
                   rounded
@@ -103,6 +91,7 @@
               </q-card-section>
             </div>
 
+            <!-- Date -->
             <div class="row justify-around items-center">
               <q-card-section>
                 <p class="q-ma-none">
@@ -121,12 +110,19 @@
               </q-card-section>
 
               <q-card-section>
-                {{ date.formatDate(props.row.nextDate, 'YYYY-MM-DD') }}
+                {{
+                  date.formatDate(
+                    props.row.lastDate +
+                      stages[props.row.stage].waitDays * 1000 * 60 * 60 * 24,
+                    'YYYY-MM-DD'
+                  )
+                }}
               </q-card-section>
             </div>
 
             <q-separator />
 
+            <!-- Actions -->
             <q-card-actions>
               <div
                 class="row justify-center items-center"
@@ -149,58 +145,25 @@
 
 <script setup lang="ts">
 import { date, useQuasar } from 'quasar';
-import { onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount } from 'vue';
 import chapterService from 'src/services/chapterService';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { useChapterStore } from './../stores/chapterStore';
 
 const route = useRoute();
-
 const $q = useQuasar();
-
 const chapterStore = useChapterStore();
-
-const columns = [
-  {
-    name: 'chapter',
-    required: true,
-    label: '章节',
-    align: 'left',
-    field: 'chapter',
-    sortable: true,
-  },
-  {
-    name: 'stage',
-    required: true,
-    align: 'left',
-    label: '进度',
-    field: 'stage',
-    sortable: true,
-  },
-  {
-    name: 'lastDate',
-    required: true,
-    align: 'left',
-    label: '上次复习时间',
-    field: 'lastDate',
-    sortable: true,
-  },
-  {
-    name: 'nextDate',
-    required: true,
-    align: 'left',
-    label: '下次复习时间',
-    field: 'nextDate',
-    sortable: true,
-  },
-];
+const courseId =
+  typeof route.params.courseId === 'string'
+    ? route.params.courseId
+    : route.params.courseId[0];
 
 onBeforeMount(() => {
-  chapterService.fetchChapters(route.params.courseId);
+  chapterService.fetchChapters(courseId);
 });
 
 onBeforeRouteUpdate(() => {
-  chapterService.fetchChapters(route.params.courseId);
+  chapterService.fetchChapters(courseId);
 });
 
 const stages = [
@@ -208,26 +171,31 @@ const stages = [
     label: '已学习',
     value: 0,
     color: 'green',
+    waitDays: 1,
   },
   {
     label: '已第一次复习',
     value: 1,
     color: 'blue',
+    waitDays: 7,
   },
   {
     label: '已第二次复习',
     value: 2,
     color: 'orange',
+    waitDays: 14,
   },
   {
     label: '已第三次复习',
     value: 3,
     color: 'deep-purple',
+    waitDays: 28,
   },
   {
     label: '已第四次复习',
     value: 4,
     color: 'grey',
+    waitDays: 0,
   },
 ];
 
@@ -241,7 +209,7 @@ function confirmDelete(chapterId: string) {
     .onOk(() => {
       // console.log('>>>> OK')
       chapterService
-        .deleteChapter(route.params.courseId, chapterId)
+        .deleteChapter(courseId, chapterId)
         .then(() => {
           $q.notify({
             message: '删除成功',
@@ -279,7 +247,6 @@ function addChapterPrompt() {
     persistent: true,
   }).onOk((data) => {
     // console.log('>>>> OK, received', data)
-    const courseId = route.params.courseId;
     chapterService
       .postChapter(courseId, {
         name: data,
@@ -287,52 +254,23 @@ function addChapterPrompt() {
         lastDate: Date.now(),
       })
       .then(() => {
-        $q.dialog({
-          title: '添加成功',
+        $q.notify({
           message: '添加成功',
+          color: 'positive',
         });
       })
       .catch((err) => {
-        $q.dialog({
-          title: '添加失败',
-          message: '失败原因' + err,
+        $q.notify({
+          message: '添加失败:' + err,
+          color: 'negative',
         });
       });
   });
 }
 
 chapterStore.$subscribe((mutation) => {
-  chapterService.updateChapter(route.params.courseId, mutation.events.target);
+  chapterService.updateChapter(courseId, mutation.events.target);
 });
-
-// watch(() =>  chapterStore.$state.chapters, (chapters) => {
-
-// })
 </script>
 
-<style lang="scss" scoped>
-.my-sticky-header-table {
-  /* height or max-height is important */
-  height: 310px;
-
-  .q-table__top,
-  .q-table__bottom,
-  thead tr:first-child th {
-    /* bg color is important for th; just specify one */
-    background-color: #c1f4cd;
-  }
-
-  thead tr th {
-    position: sticky;
-    z-index: 1;
-  }
-  thead tr:first-child th {
-    top: 0;
-  }
-  /* this is when the loading indicator appears */
-  &.q-table--loading thead tr:last-child th {
-    /* height of all previous header rows */
-    top: 48px;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

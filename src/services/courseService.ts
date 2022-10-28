@@ -1,6 +1,14 @@
 import { NewCourse, Course } from './../types/course';
 import { db } from './firebase';
-import { collection, addDoc, getDoc, getDocs, query } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  getDoc,
+  getDocs,
+  query,
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
 import { useCourseStore } from 'src/stores/courseStore';
 
 const courseStore = useCourseStore();
@@ -35,7 +43,18 @@ const postCourse = (newCourse: NewCourse) => {
     });
 };
 
+const updateCourse = async (course: Course) => {
+  const docRef = doc(db, 'courses', course.id);
+
+  // Set the "capital" field of the city 'DC'
+  return await updateDoc(docRef, {
+    name: course.name,
+    status: course.status,
+  });
+};
+
 export default {
   postCourse,
   fetchCourses,
+  updateCourse,
 };
