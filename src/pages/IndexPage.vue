@@ -43,6 +43,32 @@
           </template>
         </q-input>
 
+        <q-list class="row">
+          <q-item-label>选择头像</q-item-label>
+          <div class="row">
+            <q-item
+              class="col-4"
+              tag="label"
+              v-ripple
+              v-for="ic in defaultIcons"
+              :key="ic"
+            >
+              <q-item-section avatar>
+                <q-radio
+                  v-model="icon"
+                  checked-icon="task_alt"
+                  unchecked-icon="panorama_fish_eye"
+                  :val="ic"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-avatar>
+                  <img :src="ic" />
+                </q-avatar>
+              </q-item-section>
+            </q-item>
+          </div>
+        </q-list>
         <div>
           <q-btn
             label="注册"
@@ -70,11 +96,17 @@ import userService from '../services/userService';
 import { useQuasar } from 'quasar';
 import { NewUser } from '../types/user';
 import { ref, computed } from 'vue';
+import ICON1 from '../assets/usericon/icon1.jpg';
+import ICON2 from '../assets/usericon/icon2.jpg';
+import ICON3 from '../assets/usericon/icon3.jpg';
 
 const $q = useQuasar();
 
 // use to cotrol whether show password or not
 const isPwd = ref(true);
+
+// default icons
+const defaultIcons = [ICON1, ICON2, ICON3];
 
 const userSchema = object({
   email: string().test(async (value, context) => {
@@ -96,6 +128,7 @@ const userSchema = object({
   }),
   name: string().required('请输入用户名').min(2, '用户名至少为两位'),
   password: string().required('请输入密码').min(12, '密码至少为十二位'),
+  icon: string().required(),
 });
 
 const { handleSubmit, errors, handleReset, meta } = useForm<NewUser>({
@@ -104,12 +137,14 @@ const { handleSubmit, errors, handleReset, meta } = useForm<NewUser>({
     email: '',
     name: '',
     password: '',
+    icon: ICON1,
   },
 });
 
 const { value: email } = useField<string>('email');
 const { value: name } = useField<string>('name');
 const { value: password } = useField<string>('password');
+const { value: icon } = useField<string>('icon');
 
 // submit values if they are valid
 const onSubmit = handleSubmit((user) => {

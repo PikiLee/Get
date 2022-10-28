@@ -17,6 +17,7 @@ function createUser(user: NewUser) {
       if (auth.currentUser) {
         return updateProfile(auth.currentUser, {
           displayName: user.name,
+          photoURL: user.icon,
         });
       }
     }
