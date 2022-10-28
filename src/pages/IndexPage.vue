@@ -2,46 +2,9 @@
   <q-page>
     <div class="q-pa-md q-mx-auto q-mt-xl" style="max-width: 400px">
       <q-form @submit="onSubmit" @reset="handleReset" class="q-gutter-md">
-        <q-input
-          v-model="email"
-          type="email"
-          label="邮箱 *"
-          lazy-rules
-          square
-          standout
-          outlined
-          :error-message="errors.email"
-          :error="!!errors.email"
-        />
-        <q-input
-          v-model="name"
-          label="用户名 *"
-          lazy-rules
-          square
-          standout
-          outlined
-          :error-message="errors.name"
-          :error="!!errors.name"
-        />
-
-        <q-input
-          :type="isPwd ? 'password' : 'text'"
-          v-model="password"
-          label="密码 *"
-          lazy-rules
-          square
-          outlined
-          :error-message="errors.password"
-          :error="!!errors.password"
-        >
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
-            />
-          </template>
-        </q-input>
+        <BaseInput name="email" label="邮箱 *" type="email" />
+        <BaseInput name="name" label="用户名 *" type="text" />
+        <BaseInput name="password" label="密码 *" type="password" />
 
         <q-list class="row">
           <q-item-label>选择头像</q-item-label>
@@ -99,11 +62,9 @@ import { ref, computed } from 'vue';
 import ICON1 from '../assets/usericon/icon1.jpg';
 import ICON2 from '../assets/usericon/icon2.jpg';
 import ICON3 from '../assets/usericon/icon3.jpg';
+import BaseInput from 'src/components/BaseInput.vue';
 
 const $q = useQuasar();
-
-// use to cotrol whether show password or not
-const isPwd = ref(true);
 
 // default icons
 const defaultIcons = [ICON1, ICON2, ICON3];
@@ -131,7 +92,7 @@ const userSchema = object({
   icon: string().required(),
 });
 
-const { handleSubmit, errors, handleReset, meta } = useForm<NewUser>({
+const { handleSubmit, handleReset, meta } = useForm<NewUser>({
   validationSchema: userSchema,
   initialValues: {
     email: '',
@@ -141,9 +102,6 @@ const { handleSubmit, errors, handleReset, meta } = useForm<NewUser>({
   },
 });
 
-const { value: email } = useField<string>('email');
-const { value: name } = useField<string>('name');
-const { value: password } = useField<string>('password');
 const { value: icon } = useField<string>('icon');
 
 // submit values if they are valid
