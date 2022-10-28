@@ -1,11 +1,12 @@
 import { useUserStore } from './../stores/userStore';
-import { NewUser, User } from './../types/user';
+import { NewUser, User, SignInInfo } from './../types/user';
 import { auth } from './firebase';
 import {
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   updateProfile,
   signOut,
+  signInWithEmailAndPassword,
 } from 'firebase/auth';
 
 const setUserToStore = (user: User) => {
@@ -61,9 +62,20 @@ const logOut = () => {
   });
 };
 
+const signIn = (signInInfo: SignInInfo) => {
+  return signInWithEmailAndPassword(
+    auth,
+    signInInfo.email,
+    signInInfo.password
+  ).then(() => {
+    getUserProfile();
+  });
+};
+
 export default {
   createUser,
   checkIfEmailExists,
   getUserProfile,
   logOut,
+  signIn,
 };
