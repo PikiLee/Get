@@ -19,16 +19,14 @@
           >
         </q-toolbar-title>
 
-        <q-avatar v-if="userStore.user?.icon">
+        <q-avatar v-if="userStore.user" :style="{ cursor: 'pointer' }">
           <img :src="userStore.user?.icon" />
-        </q-avatar>
-        <q-btn flat round dense icon="person" v-if="userStore.user">
           <q-menu>
             <div class="row no-wrap q-pa-md">
               <div class="column">
                 <div class="text-h6 q-mb-md">Settings</div>
-                <q-toggle v-model="mobileData" label="Use Mobile Data" />
-                <q-toggle v-model="bluetooth" label="Bluetooth" />
+                <!-- <q-toggle v-model="mobileData" label="Use Mobile Data" />
+                <q-toggle v-model="bluetooth" label="Bluetooth" /> -->
               </div>
 
               <q-separator vertical inset class="q-mx-lg" />
@@ -38,7 +36,9 @@
                   <img :src="userStore.user?.icon" />
                 </q-avatar>
 
-                <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
+                <div class="text-subtitle1 q-mt-md q-mb-xs">
+                  {{ userStore.user.name }}
+                </div>
 
                 <q-btn
                   color="primary"
@@ -50,11 +50,8 @@
                 />
               </div>
             </div>
-            <q-avatar>
-              <img :src="userStore.user?.icon" />
-            </q-avatar>
           </q-menu>
-        </q-btn>
+        </q-avatar>
       </q-toolbar>
     </q-header>
 

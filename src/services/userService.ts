@@ -21,7 +21,7 @@ const getUserProfile = () => {
       id: user.uid,
       name: user.displayName || '',
       email: user.email || '',
-      icon: user.phoneNumber || '',
+      icon: user.photoURL || '',
       emailVerified: user.emailVerified,
     };
     setUserToStore(info);
@@ -35,6 +35,8 @@ function createUser(user: NewUser) {
         return updateProfile(auth.currentUser, {
           displayName: user.name,
           photoURL: user.icon,
+        }).then(() => {
+          getUserProfile();
         });
       }
     }

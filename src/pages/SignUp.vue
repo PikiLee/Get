@@ -48,6 +48,10 @@
           />
         </div>
       </q-form>
+      <div class="row q-my-md justify-center items-center">
+        已经有帐号了？
+        <q-btn flat :to="{ name: 'logIn' }" label="去登录吧" color="primary" />
+      </div>
     </div>
   </q-page>
 </template>
@@ -58,13 +62,15 @@ import { useForm, useField } from 'vee-validate';
 import userService from '../services/userService';
 import { useQuasar } from 'quasar';
 import { NewUser } from '../types/user';
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import ICON1 from '../assets/usericon/icon1.jpg';
 import ICON2 from '../assets/usericon/icon2.jpg';
 import ICON3 from '../assets/usericon/icon3.jpg';
 import BaseInput from 'src/components/BaseInput.vue';
+import { useRouter } from 'vue-router';
 
 const $q = useQuasar();
+const router = useRouter();
 
 // default icons
 const defaultIcons = [ICON1, ICON2, ICON3];
@@ -113,6 +119,7 @@ const onSubmit = handleSubmit((user) => {
         message: '注册成功',
         color: 'positive',
       });
+      router.push({ name: 'home' });
     })
     .catch(() => {
       $q.notify({
