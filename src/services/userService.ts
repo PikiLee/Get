@@ -10,6 +10,7 @@ import {
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signInWithEmailLink,
+  updatePassword,
 } from 'firebase/auth';
 
 const updateUsernameAndIconUrl = (data: {
@@ -24,6 +25,14 @@ const updateUsernameAndIconUrl = (data: {
     return updateProfile(auth.currentUser, dataToBeUpdated).then(() => {
       getUserProfile();
     });
+  } else {
+    return Promise.reject();
+  }
+};
+
+const updatePs = (password: string) => {
+  if (auth.currentUser) {
+    return updatePassword(auth.currentUser, password);
   } else {
     return Promise.reject();
   }
@@ -98,7 +107,7 @@ const signInOrLogInViaEmailLink = (email: string) => {
   const actionCodeSettings = {
     // URL you want to redirect back to. The domain (www.example.com) for this
     // URL must be in the authorized domains list in the Firebase Console.
-    url: 'http://localhost:9000/#/auth/finishAuth',
+    url: 'http://localhost:9000/#/auth/finishAuth/',
     // This must be true.
     handleCodeInApp: true,
   };
@@ -138,4 +147,5 @@ export default {
   signInOrLogInViaEmailLink,
   completeSignInViaEmailLink,
   updateUsernameAndIconUrl,
+  updatePs,
 };
