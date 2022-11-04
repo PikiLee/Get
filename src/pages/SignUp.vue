@@ -1,12 +1,20 @@
 <template>
   <q-page>
     <div class="q-pa-md q-mx-auto q-mt-xl" style="max-width: 400px">
-      <q-form @submit="onSubmit" @reset="handleReset" class="q-gutter-md">
-        <BaseInput name="email" label="邮箱 *" type="email" />
-        <BaseInput name="name" label="用户名 *" type="text" />
-        <BaseInput name="password" label="密码 *" type="password" />
+      <q-card>
+        <Transition>
+          <q-card-section v-if="!hasSentEmail">
+            <!-- <q-form @submit="onSubmit" class="q-gutter-md"> -->
+            <BaseInput name="email" label="邮箱 *" type="email" />
+            <q-btn
+              label="发送验证邮件"
+              @click="sendSignUpEmail"
+              color="primary"
+            ></q-btn>
+            <!-- <BaseInput name="name" label="用户名 *" type="text" /> -->
+            <!-- <BaseInput name="password" label="密码 *" type="password" /> -->
 
-        <q-list class="row">
+            <!-- <q-list class="row">
           <q-item-label>选择头像</q-item-label>
           <div class="row">
             <q-item
@@ -31,27 +39,34 @@
               </q-item-section>
             </q-item>
           </div>
-        </q-list>
-        <div>
-          <q-btn
-            label="注册"
-            type="submit"
-            color="primary"
-            :disable="!isValid"
-          />
-          <q-btn
-            label="重置"
-            type="reset"
-            color="primary"
-            flat
-            class="q-ml-sm"
-          />
-        </div>
-      </q-form>
-      <div class="row q-my-md justify-center items-center">
+        </q-list> -->
+            <div>
+              <!-- <q-btn
+                label="登录"
+                type="submit"
+                color="primary"
+                :disable="!isValid"
+              /> -->
+              <!-- <q-btn
+              label="重置"
+              type="reset"
+              color="primary"
+              flat
+              class="q-ml-sm"
+              /> -->
+            </div>
+            <p class="text-center">没有注册的邮箱将自动注册</p>
+            <!-- </q-form> -->
+          </q-card-section>
+          <q-card-section v-else>
+            <ResendEmail :email="email"></ResendEmail>
+          </q-card-section>
+        </Transition>
+      </q-card>
+      <!-- <div class="row q-my-md justify-center items-center">
         已经有帐号了？
         <q-btn flat :to="{ name: 'logIn' }" label="去登录吧" color="primary" />
-      </div>
+      </div> -->
     </div>
   </q-page>
 </template>
@@ -62,12 +77,13 @@ import { useForm, useField } from 'vee-validate';
 import userService from '../services/userService';
 import { useQuasar } from 'quasar';
 import { NewUser } from '../types/user';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import ICON1 from '../assets/usericon/icon1.jpg';
 import ICON2 from '../assets/usericon/icon2.jpg';
 import ICON3 from '../assets/usericon/icon3.jpg';
 import BaseInput from 'src/components/BaseInput.vue';
 import { useRouter } from 'vue-router';
+import ResendEmail from 'src/components/ResendEmail.vue';
 
 const $q = useQuasar();
 const router = useRouter();
@@ -98,15 +114,16 @@ const userSchema = object({
   icon: string().required(),
 });
 
-const { handleSubmit, handleReset, meta } = useForm<NewUser>({
-  validationSchema: userSchema,
-  initialValues: {
-    email: '',
-    name: '',
-    password: '',
-    icon: ICON1,
-  },
-});
+const { handleSubmit, handleReset, meta, validateField, values } =
+  useForm<NewUser>({
+    validationSchema: userSchema,
+    initialValues: {
+      email: '',
+      name: '',
+      password: '',
+      icon: ICON1,
+    },
+  });
 
 const { value: icon } = useField<string>('icon');
 
@@ -129,8 +146,23 @@ const onSubmit = handleSubmit((user) => {
     });
 });
 
+const email = ref('');
+
+const sendSignUpEmail = () => {
+  validateField('email').then((res) => {
+    if (res.valid) {
+      userService.signInOrLogInViaEmailLink(values.email).then(() => {
+        hasSentEmail.value = true;
+        email.value = values.email;
+      });
+    }
+  });
+};
+
 // form's validity status
 const isValid = computed(() => meta.value.valid && meta.value.dirty);
+
+const hasSentEmail = ref(false);
 </script>
 
 <style scoped></style>

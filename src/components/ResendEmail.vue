@@ -1,0 +1,43 @@
+<template>
+  <div>
+    <h2 class="text-h5 text-center">邮件已发送</h2>
+    <p class="text-center">{{ count }}秒后可以重新发送邮件</p>
+    <q-btn
+      label="重新发送"
+      type="button"
+      color="primary"
+      :disable="count !== 0"
+      @click="resend"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import userService from 'src/services/userService';
+import { useIntervalFn } from '@vueuse/core';
+
+const resendInterval = 3;
+
+const count = ref(resendInterval);
+
+const { pause, resume } = useIntervalFn(() => {
+  count.value -= 1;
+  if (count.value <= 0) {
+    pause();
+  }
+}, 1000);
+
+const props = defineProps<{
+  email: string;
+}>();
+
+const resend = () => {
+  count.value = resendInterval;
+  resume();
+  console.log('email', props.email);
+  userService.signInOrLogInViaEmailLink(props.email);
+};
+</script>
+
+<style scoped></style>
