@@ -37,7 +37,6 @@ const props = defineProps<{
 const resend = () => {
   count.value = resendInterval;
   resume();
-  console.log('email', props.email);
   userService.signInOrLogInViaEmailLink(props.email);
 };
 </script>

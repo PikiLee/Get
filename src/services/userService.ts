@@ -12,6 +12,7 @@ import {
   signInWithEmailLink,
   updatePassword,
 } from 'firebase/auth';
+import ICON1 from '../assets/usericon/icon1.jpg';
 
 const updateUsernameAndIconUrl = (data: {
   name: string | null;
@@ -48,9 +49,9 @@ const getUserProfile = () => {
   if (user !== null) {
     const info: User = {
       id: user.uid,
-      name: user.displayName || '',
+      name: user.displayName || '快乐的小猫咪',
       email: user.email || '',
-      icon: user.photoURL || '',
+      icon: user.photoURL || ICON1,
       emailVerified: user.emailVerified,
     };
     setUserToStore(info);
@@ -105,32 +106,19 @@ const signIn = (signInInfo: SignInInfo) => {
 
 const signInOrLogInViaEmailLink = (email: string) => {
   const actionCodeSettings = {
-    // URL you want to redirect back to. The domain (www.example.com) for this
-    // URL must be in the authorized domains list in the Firebase Console.
     url: 'http://localhost:9000/#/auth/finishAuth/',
-    // This must be true.
     handleCodeInApp: true,
   };
 
   return sendSignInLinkToEmail(auth, email, actionCodeSettings).then(() => {
-    // The link was successfully sent. Inform the user.
-    // Save the email locally so you don't need to ask the user for it again
-    // if they open the link on the same device.
     window.localStorage.setItem('emailForSignIn', email);
-    // ...
   });
 };
 
 const completeSignInViaEmailLink = (email: string) => {
   if (isSignInWithEmailLink(auth, window.location.href)) {
     return signInWithEmailLink(auth, email, window.location.href).then(() => {
-      // Clear email from storage.
       window.localStorage.removeItem('emailForSignIn');
-      // You can access the new user via result.user
-      // Additional user info profile not available via:
-      // result.additionalUserInfo.profile == null
-      // You can check if the user is new or existing:
-      // result.additionalUserInfo.isNewUser
       getUserProfile();
     });
   } else {

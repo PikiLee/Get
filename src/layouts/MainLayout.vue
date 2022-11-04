@@ -19,6 +19,14 @@
           >
         </q-toolbar-title>
 
+        <RouterLink
+          :to="{ name: 'signUp' }"
+          :style="{ textDecoration: 'none', color: 'white' }"
+          class="q-mr-md"
+          v-if="!userStore.isLoggedIn"
+          >注册/登录</RouterLink
+        >
+
         <q-avatar v-if="userStore.user" :style="{ cursor: 'pointer' }">
           <img :src="userStore.user?.icon" />
           <q-menu>

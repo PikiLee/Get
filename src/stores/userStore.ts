@@ -5,6 +5,10 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     user: null as User | null,
   }),
-  getters: {},
+  getters: {
+    isLoggedIn(state) {
+      return state.user !== null;
+    },
+  },
   actions: {},
 });

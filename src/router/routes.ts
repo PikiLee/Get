@@ -9,11 +9,13 @@ const routes: RouteRecordRaw[] = [
         path: '',
         component: () => import('pages/IndexPage.vue'),
         name: 'home',
+        meta: { requiresAuth: true },
       },
       {
         path: 'course/:courseId',
         component: () => import('pages/CourseDetail.vue'),
         name: 'course',
+        meta: { requiresAuth: true },
       },
       {
         path: 'auth',
