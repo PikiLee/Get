@@ -2,7 +2,7 @@
   <q-page>
     <q-splitter v-model="splitterModel">
       <template v-slot:before>
-        <q-tabs v-model="tab" vertical class="text-teal">
+        <q-tabs v-model="tab" vertical>
           <q-tab name="name" icon="person" label="用户名" />
           <q-tab name="icon" icon="face" label="头像" />
           <q-tab name="password" icon="edit" label="密码" />

@@ -4,7 +4,12 @@
   </p>
   <BaseInput type="text" label="用户名" name="name"></BaseInput>
   <div class="row q-my-md">
-    <q-btn label="提交" color="primary" @click="setUsernameAndIcon"></q-btn>
+    <q-btn
+      label="提交"
+      color="primary"
+      :loading="loading"
+      @click="setUsernameAndIcon"
+    ></q-btn>
   </div>
 </template>
 
@@ -15,9 +20,11 @@ import userService from 'src/services/userService';
 import BaseInput from './BaseInput.vue';
 import { useUserStore } from 'src/stores/userStore';
 import { useQuasar } from 'quasar';
+import { ref } from 'vue';
 
 const userStore = useUserStore();
 const $q = useQuasar();
+const loading = ref(false);
 
 const userSchema = object({
   name: string().required('请输入用户名').min(2, '用户名至少为两位'),
@@ -33,6 +40,7 @@ const { validateField, values } = useForm({
 const setUsernameAndIcon = () => {
   validateField('name').then((res) => {
     if (res.valid) {
+      loading.value = true;
       userService
         .updateUsernameAndIconUrl({
           name: values.name,
@@ -49,6 +57,9 @@ const setUsernameAndIcon = () => {
             message: '修改失败',
             color: 'negative',
           });
+        })
+        .finally(() => {
+          loading.value = false;
         });
     }
   });
