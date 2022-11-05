@@ -1,5 +1,4 @@
 <template>
-  <div class="text-h4 q-mb-md">修改用户名</div>
   <p>
     现用户名：<span>{{ userStore.user?.name }}</span>
   </p>

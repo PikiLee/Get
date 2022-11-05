@@ -1,5 +1,4 @@
 <template>
-  <div class="text-h4 q-mb-md">修改头像</div>
   <div class="row q-my-md q-gutter-lg">
     <span>现头像</span>
     <q-avatar>
