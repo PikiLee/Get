@@ -18,6 +18,12 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true },
       },
       {
+        path: 'setting',
+        component: () => import('pages/AppSetting.vue'),
+        name: 'setting',
+        meta: { requiresAuth: true },
+      },
+      {
         path: 'auth',
         children: [
           {

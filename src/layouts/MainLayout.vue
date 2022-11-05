@@ -70,7 +70,16 @@
             ><RouterLink
               :to="{ path: '/' }"
               :style="{ textDecoration: 'none', color: 'black' }"
-              >Home</RouterLink
+              >主页</RouterLink
+            ></q-item-section
+          >
+        </q-item>
+        <q-item>
+          <q-item-section
+            ><RouterLink
+              :to="{ name: 'setting' }"
+              :style="{ textDecoration: 'none', color: 'black' }"
+              >设置</RouterLink
             ></q-item-section
           >
         </q-item>
