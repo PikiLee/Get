@@ -21,7 +21,9 @@
             <UsernameSetting></UsernameSetting>
           </q-tab-panel>
 
-          <q-tab-panel name="icon"> </q-tab-panel>
+          <q-tab-panel name="icon">
+            <IconSetting></IconSetting>
+          </q-tab-panel>
         </q-tab-panels>
       </template>
     </q-splitter>
@@ -29,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import IconSetting from 'src/components/IconSetting.vue';
 import UsernameSetting from 'src/components/UsernameSetting.vue';
 import { ref } from 'vue';
 
