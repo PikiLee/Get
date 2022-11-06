@@ -7,7 +7,7 @@
           class="col-4"
           tag="label"
           v-ripple
-          v-for="info in imgInfos"
+          v-for="info in options"
           :key="info.url"
         >
           <q-item-section avatar>
@@ -27,33 +27,53 @@
         </q-item>
       </div>
     </q-list>
-    <MyUploader class="q-my-md" accept="image/*"></MyUploader>
+    <MyUploader
+      class="q-my-md"
+      accept="image/*"
+      folder="icon"
+      auto-upload
+      @finish-upload:file="addCustomIcon"
+      max-file-size="1024000"
+    ></MyUploader>
   </div>
 </template>
 
 <script setup lang="ts">
-import storageService from 'src/services/storageService';
 import { useField } from 'vee-validate';
-import { ref, watch } from 'vue';
 import MyUploader from './MyUploader.vue';
+import ICON1 from '../assets/usericon/icon1.jpg';
+import ICON2 from '../assets/usericon/icon2.jpg';
+import ICON3 from '../assets/usericon/icon3.jpg';
+import { ref } from 'vue';
 
-interface ImgInfo {
-  url: string;
-  title: string | null;
-}
-
-defineProps<{
-  imgInfos: ImgInfo[];
-}>();
+const options = ref<
+  {
+    url: string;
+    title: string | null;
+  }[]
+>([
+  {
+    url: ICON1,
+    title: '默认头像1',
+  },
+  {
+    url: ICON2,
+    title: '默认头像2',
+  },
+  {
+    url: ICON3,
+    title: '默认头像3',
+  },
+]);
 
 const { value } = useField<string>('icon');
-const icon = ref<File | null>(null);
 
-watch<File | null>(icon, (newValue: File | null) => {
-  if (newValue) {
-    storageService.uploadIcon(newValue);
-  }
-});
+const addCustomIcon = (iconUrl: string) => {
+  options.value.push({
+    url: iconUrl,
+    title: null,
+  });
+};
 </script>
 
 <style scoped></style>

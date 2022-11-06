@@ -9,6 +9,7 @@
           :value="progress"
           color="secondary"
           class="col-9"
+          animation-speed="400"
         />
       </div>
       <q-space></q-space>
@@ -20,12 +21,12 @@
         v-if="!hasAddedFile"
       >
         <q-file
-          :modelValue="modelValue"
-          @update:model-value="(value) => emits('update:modelValue', value)"
+          v-model="file"
           label="Standard"
           class="file-inputer"
           ref="fileInputer"
           :accept="accept"
+          :max-file-size="maxFileSize"
         />
       </q-btn>
       <q-btn
@@ -37,12 +38,28 @@
       ></q-btn>
     </q-card-section>
     <q-card-section>
-      <figure v-if="fileURL" class="q-ma-none">
+      <figure v-if="file" class="q-ma-none">
         <figcaption class="text-center q-mb-sm">
           <header>
-            {{ props.modelValue?.name }}
+            {{ file?.name }}
           </header>
-          <p>{{ props.modelValue?.size + ' KB' }}</p>
+          <p>
+            <q-icon
+              name="error"
+              size="1rem"
+              color="negative"
+              v-if="isError"
+            ></q-icon>
+            <q-icon
+              name="done"
+              size="1rem"
+              color="positive"
+              v-if="isDone"
+            ></q-icon>
+            <span>
+              {{ file?.size * 0.001 + ' KB' }}
+            </span>
+          </p>
         </figcaption>
         <div class="relative-position">
           <q-img :src="fileURL" />
@@ -61,35 +78,62 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { QFile } from 'quasar';
+import storageService from 'src/services/storageService';
 
 const props = defineProps<{
   accept?: string;
-  modelValue: File | null;
+  folder: keyof typeof storageService.storageFolder;
+  autoUpload?: boolean;
+  maxFileSize?: number | string;
 }>();
-const emits = defineEmits(['update:modelValue', 'upload:file']);
 
-const progress = ref(0.3);
+const emits = defineEmits(['finishUpload:file']);
+
+const file = ref<File | null>(null);
 const fileURL = computed(() => {
-  if (props.modelValue) {
-    return URL.createObjectURL(props.modelValue);
+  if (file.value) {
+    return URL.createObjectURL(file.value);
   } else {
     return '';
   }
 });
 const hasAddedFile = computed(() => {
-  return !!props.modelValue;
+  return !!file.value;
 });
 const fileInputer = ref<typeof QFile | null>(null);
 
 const clearFile = () => {
-  emits('update:modelValue', null);
+  file.value = null;
+  progress.value = 0;
 };
 
+const { start, progress, isError, isDone, url } = storageService.upload({
+  folder: props.folder,
+});
+
 const uploadFile = () => {
-  emits('upload:file');
+  if (file.value) {
+    start(file.value);
+  }
 };
+
+// auto upload
+if (props.autoUpload) {
+  watch(file, (newValue) => {
+    if (newValue) {
+      uploadFile();
+    }
+  });
+}
+
+// emit file url
+watch(url, (newValue) => {
+  if (newValue) {
+    emits('finishUpload:file', newValue);
+  }
+});
 </script>
 
 <style scoped lang="scss">
