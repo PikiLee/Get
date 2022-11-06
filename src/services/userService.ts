@@ -12,7 +12,6 @@ import {
   signInWithEmailLink,
   updatePassword,
 } from 'firebase/auth';
-import ICON1 from '../assets/usericon/icon1.jpg';
 import storageService from './storageService';
 
 const updateUsernameAndIconUrl = (data: {
@@ -47,14 +46,17 @@ const setUserToStore = (user: User) => {
 
 const getUserProfile = async () => {
   const user = auth.currentUser;
+
   if (user !== null) {
+    const iconFullPath = user.photoURL ?? storageService.defaultIconFullPath;
     const info: User = {
       id: user.uid,
       name: user.displayName || '快乐的小猫咪',
       email: user.email || '',
-      icon: user.photoURL
-        ? await storageService.fetchDownloadURL(user.photoURL)
-        : ICON1,
+      icon: {
+        url: await storageService.fetchDownloadURL(iconFullPath),
+        fullPath: iconFullPath,
+      },
       emailVerified: user.emailVerified,
     };
     setUserToStore(info);

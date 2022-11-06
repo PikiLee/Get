@@ -27,6 +27,7 @@
                   floating
                   v-if="info.type === 'custom'"
                   :style="{ cursor: 'pointer' }"
+                  @click.stop.prevent="deleteIcon(info.value)"
                 >
                   <q-icon name="close" color="white"></q-icon>
                 </q-badge>
@@ -37,6 +38,7 @@
         </q-item>
       </div>
     </q-list>
+    <p>上传头像</p>
     <MyUploader
       class="q-my-md"
       accept="image/*"
@@ -51,9 +53,6 @@
 <script setup lang="ts">
 import { useField } from 'vee-validate';
 import MyUploader from './MyUploader.vue';
-import ICON1 from '../assets/usericon/icon1.jpg';
-import ICON2 from '../assets/usericon/icon2.jpg';
-import ICON3 from '../assets/usericon/icon3.jpg';
 import { onBeforeMount, ref } from 'vue';
 import storageService from 'src/services/storageService';
 import { useUserStore } from 'src/stores/userStore';
@@ -65,26 +64,7 @@ const options = ref<
     type: 'default' | 'custom';
     value: string;
   }[]
->([
-  {
-    url: ICON1,
-    title: '默认头像1',
-    type: 'default',
-    value: ICON1,
-  },
-  {
-    url: ICON2,
-    title: '默认头像2',
-    type: 'default',
-    value: ICON2,
-  },
-  {
-    url: ICON3,
-    title: '默认头像3',
-    type: 'default',
-    value: ICON3,
-  },
-]);
+>([]);
 
 const { value } = useField<string>('icon');
 
@@ -103,6 +83,22 @@ onBeforeMount(() => {
   storageService
     .fetchFile({
       folder: 'icon',
+      userId: 'default',
+    })
+    .then((res) => {
+      res.forEach((icon) => {
+        options.value.push({
+          url: icon.url,
+          value: icon.fullPath,
+          title: '默认头像',
+          type: 'default',
+        });
+      });
+    });
+
+  storageService
+    .fetchFile({
+      folder: 'icon',
       userId: userStore.user?.id ?? 'default',
     })
     .then((res) => {
@@ -116,6 +112,10 @@ onBeforeMount(() => {
       });
     });
 });
+
+const deleteIcon = (fullPath: string) => {
+  storageService.deleteFile(fullPath);
+};
 </script>
 
 <style scoped></style>

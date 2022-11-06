@@ -28,7 +28,7 @@
         >
 
         <q-avatar v-if="userStore.user" :style="{ cursor: 'pointer' }">
-          <img :src="userStore.user?.icon" />
+          <img :src="userStore.user?.icon.url" />
           <q-menu>
             <div class="row no-wrap q-pa-md">
               <div class="column">
@@ -41,7 +41,7 @@
 
               <div class="column items-center">
                 <q-avatar size="72px" v-if="userStore.user?.icon">
-                  <img :src="userStore.user?.icon" />
+                  <img :src="userStore.user?.icon.url" />
                 </q-avatar>
 
                 <div class="text-subtitle1 q-mt-md q-mb-xs">

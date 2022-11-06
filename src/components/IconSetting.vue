@@ -1,8 +1,8 @@
 <template>
   <div class="row q-my-md q-gutter-lg">
     <span>现头像</span>
-    <q-avatar>
-      <img :src="userStore.user?.icon" />
+    <q-avatar v-if="userStore.user">
+      <img :src="userStore.user?.icon.url" />
     </q-avatar>
   </div>
   <ImgSelect></ImgSelect>
@@ -22,7 +22,7 @@ import { useForm } from 'vee-validate';
 import { ref } from 'vue';
 import { object, string } from 'yup';
 import { useQuasar } from 'quasar';
-import ICON1 from '../assets/usericon/icon1.jpg';
+import storageService from 'src/services/storageService';
 
 const userStore = useUserStore();
 const $q = useQuasar();
@@ -34,7 +34,7 @@ const userSchema = object({
 const { validateField, values } = useForm({
   validationSchema: userSchema,
   initialValues: {
-    icon: userStore.user?.icon || ICON1,
+    icon: userStore.user?.icon.fullPath ?? storageService.defaultIconFullPath,
   },
 });
 const loading = ref(false);

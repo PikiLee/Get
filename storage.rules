@@ -3,7 +3,7 @@ service firebase.storage {
   match /b/{bucket}/o {
     match /icons/{userId}/{imageId} {
       allow read;
-      allow write: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId && userId != 'default';
     }
   }
 }

@@ -4,7 +4,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
   listAll,
-  StorageReference,
+  deleteObject,
 } from 'firebase/storage';
 import md5 from 'md5';
 import { ref as vueRef } from 'vue';
@@ -12,6 +12,8 @@ import { ref as vueRef } from 'vue';
 const storageFolder = {
   icon: 'icons/',
 };
+
+const defaultIconFullPath = storageFolder.icon + 'default/icon1.jpg';
 
 export type KeyOfStorageFolder = keyof typeof storageFolder;
 
@@ -107,9 +109,19 @@ const fetchDownloadURL = (fullPath: string) => {
   return getDownloadURL(fileRef);
 };
 
+const deleteFile = (fullPath: string) => {
+  // Create a reference to the file to delete
+  const desertRef = ref(storage, fullPath);
+
+  // Delete the file
+  return deleteObject(desertRef);
+};
+
 export default {
   storageFolder,
+  defaultIconFullPath,
   upload,
   fetchFile,
   fetchDownloadURL,
+  deleteFile,
 };

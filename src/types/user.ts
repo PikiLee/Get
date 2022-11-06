@@ -1,7 +1,10 @@
 export interface User {
   id: string;
   name: string;
-  icon: string;
+  icon: {
+    url: string;
+    fullPath: string;
+  };
   email: string;
   emailVerified: boolean;
 }
