@@ -117,10 +117,11 @@ const clearFile = () => {
 
 const userStore = useUserStore();
 
-const { start, progress, isError, isDone, url } = storageService.upload({
-  folder: props.folder,
-  userId: userStore.user?.id ?? 'default',
-});
+const { start, progress, isError, isDone, url, fullPath } =
+  storageService.upload({
+    folder: props.folder,
+    userId: userStore.user?.id ?? 'default',
+  });
 
 const uploadFile = () => {
   if (file.value) {
@@ -141,7 +142,7 @@ if (props.autoUpload) {
 // emit file url
 watch(url, (newValue) => {
   if (newValue) {
-    emits('finishUpload:file', newValue);
+    emits('finishUpload:file', { url, fullPath });
   }
 });
 

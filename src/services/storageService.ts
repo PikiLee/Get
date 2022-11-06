@@ -4,6 +4,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
   listAll,
+  StorageReference,
 } from 'firebase/storage';
 import md5 from 'md5';
 import { ref as vueRef } from 'vue';
@@ -27,14 +28,15 @@ const upload = (options: {
   const isDone = vueRef(false);
   const isError = vueRef(false);
   const url = vueRef('');
+  const fullPath = vueRef('');
 
   const start = async (file: File) => {
-    console.log('start');
     const delay = progress.value === 0 ? 0 : 500;
     progress.value = 0;
     isDone.value = false;
     isError.value = false;
     url.value = '';
+    fullPath.value = '';
 
     const fileRef = ref(
       storage,
@@ -49,7 +51,6 @@ const upload = (options: {
       uploadTask.on(
         'state_changed',
         (snapshot) => {
-          console.log('hr1');
           progress.value = snapshot.bytesTransferred / snapshot.totalBytes;
         },
         () => {
@@ -59,8 +60,8 @@ const upload = (options: {
         () => {
           isDone.value = true;
           progress.value = 1;
+          fullPath.value = uploadTask.snapshot.ref.fullPath;
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log('File available at', downloadURL);
             url.value = downloadURL;
           });
         }
@@ -68,7 +69,7 @@ const upload = (options: {
     }, delay);
   };
 
-  return { start, progress, isDone, isError, url };
+  return { start, progress, isDone, isError, url, fullPath };
 };
 
 const fetchFile = (options: { folder: KeyOfStorageFolder; userId: string }) => {
@@ -81,21 +82,34 @@ const fetchFile = (options: { folder: KeyOfStorageFolder; userId: string }) => {
     //   // All the prefixes under listRef.
     //   // You may call listAll() recursively on them.
     // });
-    const urls: string[] = [];
+
+    const r: {
+      url: string;
+      fullPath: string;
+    }[] = [];
     for (const itemRef of res.items) {
       try {
-        urls.push(await getDownloadURL(itemRef));
+        r.push({
+          url: await getDownloadURL(itemRef),
+          fullPath: itemRef.fullPath,
+        });
       } catch (err) {
         console.log(err);
       }
     }
 
-    return urls;
+    return r;
   });
+};
+
+const fetchDownloadURL = (fullPath: string) => {
+  const fileRef = ref(storage, fullPath);
+  return getDownloadURL(fileRef);
 };
 
 export default {
   storageFolder,
   upload,
   fetchFile,
+  fetchDownloadURL,
 };

@@ -15,7 +15,7 @@
               v-model="value"
               checked-icon="task_alt"
               unchecked-icon="panorama_fish_eye"
-              :val="info.url"
+              :val="info.value"
             />
           </q-item-section>
           <q-item-section>
@@ -63,32 +63,37 @@ const options = ref<
     url: string;
     title: string | null;
     type: 'default' | 'custom';
+    value: string;
   }[]
 >([
   {
     url: ICON1,
     title: '默认头像1',
     type: 'default',
+    value: ICON1,
   },
   {
     url: ICON2,
     title: '默认头像2',
     type: 'default',
+    value: ICON2,
   },
   {
     url: ICON3,
     title: '默认头像3',
     type: 'default',
+    value: ICON3,
   },
 ]);
 
 const { value } = useField<string>('icon');
 
-const addCustomIcon = (iconUrl: string) => {
+const addCustomIcon = (opt: { url: string; fullPath: string }) => {
   options.value.push({
-    url: iconUrl,
+    url: opt.url,
     title: null,
     type: 'custom',
+    value: opt.fullPath,
   });
 };
 
@@ -100,10 +105,11 @@ onBeforeMount(() => {
       folder: 'icon',
       userId: userStore.user?.id ?? 'default',
     })
-    .then((urls) => {
-      urls.forEach((url) => {
+    .then((res) => {
+      res.forEach((icon) => {
         options.value.push({
-          url,
+          url: icon.url,
+          value: icon.fullPath,
           title: null,
           type: 'custom',
         });

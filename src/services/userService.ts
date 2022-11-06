@@ -13,6 +13,7 @@ import {
   updatePassword,
 } from 'firebase/auth';
 import ICON1 from '../assets/usericon/icon1.jpg';
+import storageService from './storageService';
 
 const updateUsernameAndIconUrl = (data: {
   name: string | null;
@@ -44,14 +45,16 @@ const setUserToStore = (user: User) => {
   userStore.user = user;
 };
 
-const getUserProfile = () => {
+const getUserProfile = async () => {
   const user = auth.currentUser;
   if (user !== null) {
     const info: User = {
       id: user.uid,
       name: user.displayName || '快乐的小猫咪',
       email: user.email || '',
-      icon: user.photoURL || ICON1,
+      icon: user.photoURL
+        ? await storageService.fetchDownloadURL(user.photoURL)
+        : ICON1,
       emailVerified: user.emailVerified,
     };
     setUserToStore(info);
