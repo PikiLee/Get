@@ -54,7 +54,9 @@ import MyUploader from './MyUploader.vue';
 import ICON1 from '../assets/usericon/icon1.jpg';
 import ICON2 from '../assets/usericon/icon2.jpg';
 import ICON3 from '../assets/usericon/icon3.jpg';
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import storageService from 'src/services/storageService';
+import { useUserStore } from 'src/stores/userStore';
 
 const options = ref<
   {
@@ -89,6 +91,25 @@ const addCustomIcon = (iconUrl: string) => {
     type: 'custom',
   });
 };
+
+// fetch current user's icons
+const userStore = useUserStore();
+onBeforeMount(() => {
+  storageService
+    .fetchFile({
+      folder: 'icon',
+      userId: userStore.user?.id ?? 'default',
+    })
+    .then((urls) => {
+      urls.forEach((url) => {
+        options.value.push({
+          url,
+          title: null,
+          type: 'custom',
+        });
+      });
+    });
+});
 </script>
 
 <style scoped></style>

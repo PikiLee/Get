@@ -86,6 +86,7 @@
 import { ref, computed, watch } from 'vue';
 import { QFile } from 'quasar';
 import storageService from 'src/services/storageService';
+import { useUserStore } from 'src/stores/userStore';
 
 const props = defineProps<{
   accept?: string;
@@ -114,8 +115,11 @@ const clearFile = () => {
   progress.value = 0;
 };
 
+const userStore = useUserStore();
+
 const { start, progress, isError, isDone, url } = storageService.upload({
   folder: props.folder,
+  userId: userStore.user?.id ?? 'default',
 });
 
 const uploadFile = () => {

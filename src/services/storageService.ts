@@ -1,5 +1,10 @@
 import { storage } from './firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  listAll,
+} from 'firebase/storage';
 import md5 from 'md5';
 import { ref as vueRef } from 'vue';
 
@@ -7,12 +12,17 @@ const storageFolder = {
   icon: 'icons/',
 };
 
+export type KeyOfStorageFolder = keyof typeof storageFolder;
+
 const randomName = (name: string) => {
   const parts = name.split('.');
   return md5(parts[0] + Date.now()) + '.' + parts[1];
 };
 
-const upload = (options: { folder: keyof typeof storageFolder }) => {
+const upload = (options: {
+  folder: keyof typeof storageFolder;
+  userId: string;
+}) => {
   const progress = vueRef(0);
   const isDone = vueRef(false);
   const isError = vueRef(false);
@@ -28,7 +38,10 @@ const upload = (options: { folder: keyof typeof storageFolder }) => {
 
     const fileRef = ref(
       storage,
-      storageFolder[options.folder] + randomName(file.name)
+      storageFolder[options.folder] +
+        options.userId +
+        '/' +
+        randomName(file.name)
     );
     const uploadTask = uploadBytesResumable(fileRef, file);
 
@@ -58,7 +71,31 @@ const upload = (options: { folder: keyof typeof storageFolder }) => {
   return { start, progress, isDone, isError, url };
 };
 
+const fetchFile = (options: { folder: KeyOfStorageFolder; userId: string }) => {
+  // Create a reference under which you want to list
+  const listRef = ref(storage, storageFolder[options.folder] + options.userId);
+
+  // Find all the prefixes and items.
+  return listAll(listRef).then(async (res) => {
+    // res.prefixes.forEach((folderRef) => {
+    //   // All the prefixes under listRef.
+    //   // You may call listAll() recursively on them.
+    // });
+    const urls: string[] = [];
+    for (const itemRef of res.items) {
+      try {
+        urls.push(await getDownloadURL(itemRef));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    return urls;
+  });
+};
+
 export default {
   storageFolder,
   upload,
+  fetchFile,
 };
