@@ -1,11 +1,5 @@
 import { storage } from './firebase';
-import {
-  ref,
-  uploadBytesResumable,
-  UploadTask,
-  UploadTaskSnapshot,
-  getDownloadURL,
-} from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import md5 from 'md5';
 import { ref as vueRef } from 'vue';
 
@@ -24,7 +18,7 @@ const upload = (options: { folder: keyof typeof storageFolder }) => {
   const isError = vueRef(false);
   const url = vueRef('');
 
-  const start = (file: File) => {
+  const start = async (file: File) => {
     console.log('start');
     const delay = progress.value === 0 ? 0 : 500;
     progress.value = 0;
@@ -42,6 +36,7 @@ const upload = (options: { folder: keyof typeof storageFolder }) => {
       uploadTask.on(
         'state_changed',
         (snapshot) => {
+          console.log('hr1');
           progress.value = snapshot.bytesTransferred / snapshot.totalBytes;
         },
         () => {
@@ -50,6 +45,7 @@ const upload = (options: { folder: keyof typeof storageFolder }) => {
         },
         () => {
           isDone.value = true;
+          progress.value = 1;
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log('File available at', downloadURL);
             url.value = downloadURL;

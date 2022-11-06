@@ -1,15 +1,14 @@
 <template>
   <q-card class="card">
     <q-card-section class="bg-primary text-white row items-center">
-      <div class="col-9">
+      <div class="col-7">
         <q-linear-progress
           stripe
           rounded
           size="10px"
           :value="progress"
           color="secondary"
-          class="col-9"
-          animation-speed="400"
+          animation-speed="100"
         />
       </div>
       <q-space></q-space>
@@ -18,7 +17,6 @@
         color="white"
         class="text-black col-2"
         @click="fileInputer?.pickFiles"
-        v-if="!hasAddedFile"
       >
         <q-file
           v-model="file"
@@ -27,10 +25,12 @@
           ref="fileInputer"
           :accept="accept"
           :max-file-size="maxFileSize"
+          @rejected="isOverSized = true"
         />
       </q-btn>
+      <q-space></q-space>
       <q-btn
-        v-else
+        v-if="hasAddedFile"
         icon="upload"
         color="white"
         class="text-black col-2"
@@ -74,6 +74,11 @@
         </div>
       </figure>
     </q-card-section>
+    <q-card-section v-if="isOverSized">
+      <p class="text-center text-negative">
+        文件大小不能超过{{ Number(maxFileSize) * 0.001 + 'KB' }}
+      </p>
+    </q-card-section>
   </q-card>
 </template>
 
@@ -115,6 +120,7 @@ const { start, progress, isError, isDone, url } = storageService.upload({
 
 const uploadFile = () => {
   if (file.value) {
+    isOverSized.value = false;
     start(file.value);
   }
 };
@@ -134,6 +140,9 @@ watch(url, (newValue) => {
     emits('finishUpload:file', newValue);
   }
 });
+
+// check if the file is too large
+const isOverSized = ref(false);
 </script>
 
 <style scoped lang="scss">

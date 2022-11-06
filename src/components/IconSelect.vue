@@ -19,10 +19,20 @@
             />
           </q-item-section>
           <q-item-section>
-            <q-avatar>
-              <img :src="info.url" />
-            </q-avatar>
-            <p v-if="info.title">{{ info.title }}</p>
+            <div>
+              <q-avatar>
+                <img :src="info.url" />
+                <q-badge
+                  color="secondary"
+                  floating
+                  v-if="info.type === 'custom'"
+                  :style="{ cursor: 'pointer' }"
+                >
+                  <q-icon name="close" color="white"></q-icon>
+                </q-badge>
+              </q-avatar>
+              <p v-if="info.title">{{ info.title }}</p>
+            </div>
           </q-item-section>
         </q-item>
       </div>
@@ -50,19 +60,23 @@ const options = ref<
   {
     url: string;
     title: string | null;
+    type: 'default' | 'custom';
   }[]
 >([
   {
     url: ICON1,
     title: '默认头像1',
+    type: 'default',
   },
   {
     url: ICON2,
     title: '默认头像2',
+    type: 'default',
   },
   {
     url: ICON3,
     title: '默认头像3',
+    type: 'default',
   },
 ]);
 
@@ -72,6 +86,7 @@ const addCustomIcon = (iconUrl: string) => {
   options.value.push({
     url: iconUrl,
     title: null,
+    type: 'custom',
   });
 };
 </script>
