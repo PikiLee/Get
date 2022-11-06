@@ -25,7 +25,10 @@
                 <q-badge
                   color="secondary"
                   floating
-                  v-if="info.type === 'custom'"
+                  v-if="
+                    info.type === 'custom' &&
+                    info.value !== userStore.user?.icon.fullPath
+                  "
                   :style="{ cursor: 'pointer' }"
                   @click.stop.prevent="deleteIcon(info.value)"
                 >
@@ -114,7 +117,10 @@ onBeforeMount(() => {
 });
 
 const deleteIcon = (fullPath: string) => {
-  storageService.deleteFile(fullPath);
+  storageService.deleteFile(fullPath).then(() => {
+    const index = options.value.findIndex((opt) => opt.value === fullPath);
+    options.value.splice(index, 1);
+  });
 };
 </script>
 
