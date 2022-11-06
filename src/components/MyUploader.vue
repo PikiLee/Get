@@ -20,7 +20,8 @@
         v-if="!hasAddedFile"
       >
         <q-file
-          v-model="file"
+          :modelValue="modelValue"
+          @update:model-value="(value) => emits('update:modelValue', value)"
           label="Standard"
           class="file-inputer"
           ref="fileInputer"
@@ -39,9 +40,9 @@
       <figure v-if="fileURL" class="q-ma-none">
         <figcaption class="text-center q-mb-sm">
           <header>
-            {{ file?.name }}
+            {{ props.modelValue?.name }}
           </header>
-          <p>{{ file?.size + ' KB' }}</p>
+          <p>{{ props.modelValue?.size + ' KB' }}</p>
         </figcaption>
         <div class="relative-position">
           <q-img :src="fileURL" />
@@ -63,31 +64,31 @@
 import { ref, computed } from 'vue';
 import { QFile } from 'quasar';
 
-defineProps<{
+const props = defineProps<{
   accept?: string;
+  modelValue: File | null;
 }>();
-const emits = defineEmits(['upload:file']);
+const emits = defineEmits(['update:modelValue', 'upload:file']);
 
 const progress = ref(0.3);
-const file = ref<File | null>(null);
 const fileURL = computed(() => {
-  if (file.value) {
-    return URL.createObjectURL(file.value);
+  if (props.modelValue) {
+    return URL.createObjectURL(props.modelValue);
   } else {
     return '';
   }
 });
 const hasAddedFile = computed(() => {
-  return !!file.value;
+  return !!props.modelValue;
 });
 const fileInputer = ref<typeof QFile | null>(null);
 
 const clearFile = () => {
-  file.value = null;
+  emits('update:modelValue', null);
 };
 
 const uploadFile = () => {
-  emits('upload:file', file.value);
+  emits('upload:file');
 };
 </script>
 
