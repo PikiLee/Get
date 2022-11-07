@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -31,3 +31,4 @@ onAuthStateChanged(auth, (user) => {
 });
 connectAuthEmulator(auth, 'http://localhost:9099');
 connectStorageEmulator(storage, 'localhost', 9199);
+connectFirestoreEmulator(db, 'localhost', 8080);
