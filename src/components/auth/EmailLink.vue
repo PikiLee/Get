@@ -20,11 +20,11 @@
 </template>
 
 <script setup lang="ts">
-import BaseInput from './BaseInput.vue';
+import BaseInput from '../BaseInput.vue';
 import ResendEmail from './ResendEmail.vue';
 import { object, string } from 'yup';
 import { useForm } from 'vee-validate';
-import userService from '../services/userService';
+import userService from '../../services/userService';
 import { ref } from 'vue';
 
 // email form

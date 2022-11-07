@@ -38,9 +38,9 @@
 </template>
 
 <script setup lang="ts">
-import IconSetting from 'src/components/IconSetting.vue';
-import PasswordSetting from 'src/components/PasswordSetting.vue';
-import UsernameSetting from 'src/components/UsernameSetting.vue';
+import IconSetting from 'src/components/setting/IconSetting.vue';
+import PasswordSetting from 'src/components/setting/PasswordSetting.vue';
+import UsernameSetting from 'src/components/setting/UsernameSetting.vue';
 import { ref } from 'vue';
 
 const tab = ref('name');

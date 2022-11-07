@@ -17,7 +17,7 @@
 import { object, string } from 'yup';
 import { useForm } from 'vee-validate';
 import userService from 'src/services/userService';
-import BaseInput from './BaseInput.vue';
+import BaseInput from '../BaseInput.vue';
 import { useUserStore } from 'src/stores/userStore';
 import { useQuasar } from 'quasar';
 import { ref } from 'vue';

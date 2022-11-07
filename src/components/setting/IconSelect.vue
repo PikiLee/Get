@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate';
-import MyUploader from './MyUploader.vue';
+import MyUploader from '../MyUploader.vue';
 import { onBeforeMount, ref } from 'vue';
 import storageService from 'src/services/storageService';
 import { useUserStore } from 'src/stores/userStore';

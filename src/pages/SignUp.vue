@@ -39,8 +39,8 @@
 // import userService from '../services/userService';
 import { ref } from 'vue';
 
-import EmailLink from 'src/components/EmailLink.vue';
-import PasswordSignIn from 'src/components/PasswordSignIn.vue';
+import EmailLink from 'src/components/auth/EmailLink.vue';
+import PasswordSignIn from 'src/components/auth/PasswordSignIn.vue';
 
 const isPasswordMethod = ref(false);
 

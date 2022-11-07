@@ -27,7 +27,7 @@ import { useUserStore } from 'src/stores/userStore';
 // import { useForm } from 'vee-validate';
 import { ref } from 'vue';
 // import { object, string } from 'yup';
-import { useCountdown } from '../utils/useCountdown';
+import { useCountdown } from '../../utils/useCountdown';
 
 const $q = useQuasar();
 const loading = ref(false);

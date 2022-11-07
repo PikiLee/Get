@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import BaseInput from './BaseInput.vue';
+import BaseInput from '../BaseInput.vue';
 import { object, string } from 'yup';
 import userService from 'src/services/userService';
 import { useForm } from 'vee-validate';
