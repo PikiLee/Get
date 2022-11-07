@@ -32,14 +32,6 @@ const updateUsernameAndIconUrl = (data: {
   }
 };
 
-const updatePs = (password: string) => {
-  if (auth.currentUser) {
-    return updatePassword(auth.currentUser, password);
-  } else {
-    return Promise.reject();
-  }
-};
-
 const setUserToStore = (user: User) => {
   const userStore = useUserStore();
   userStore.user = user;
@@ -144,6 +136,5 @@ export default {
   signInOrLogInViaEmailLink,
   completeSignInViaEmailLink,
   updateUsernameAndIconUrl,
-  updatePs,
   sendResetPasswordEmail,
 };
