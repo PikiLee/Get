@@ -66,6 +66,9 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
         <q-item>
+          <q-item-section avatar>
+            <q-icon name="home"></q-icon>
+          </q-item-section>
           <q-item-section
             ><RouterLink
               :to="{ path: '/' }"
@@ -74,7 +77,13 @@
             ></q-item-section
           >
         </q-item>
+
+        <q-separator></q-separator>
+
         <q-item>
+          <q-item-section avatar>
+            <q-icon name="settings"></q-icon>
+          </q-item-section>
           <q-item-section
             ><RouterLink
               :to="{ name: 'setting' }"
