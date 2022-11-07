@@ -107,6 +107,7 @@ import { ref } from 'vue';
 import { date, useQuasar } from 'quasar';
 import { useUserStore } from 'src/stores/userStore';
 import userService from 'src/services/userService';
+import { useRouter } from 'vue-router';
 
 const leftDrawerOpen = ref(false);
 
@@ -116,7 +117,7 @@ function toggleLeftDrawer() {
 
 const userStore = useUserStore();
 const $q = useQuasar();
-
+const router = useRouter();
 const logOut = () => {
   userService
     .logOut()
@@ -124,6 +125,9 @@ const logOut = () => {
       $q.notify({
         message: '退出成功',
         color: 'positive',
+      });
+      router.push({
+        name: 'signUp',
       });
     })
     .catch(() => {
