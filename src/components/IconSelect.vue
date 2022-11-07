@@ -41,6 +41,7 @@
         </q-item>
       </div>
     </q-list>
+    <q-separator spaced="24px" />
     <p>上传头像</p>
     <MyUploader
       class="q-my-md"

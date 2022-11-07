@@ -5,6 +5,7 @@
       <img :src="userStore.user?.icon.url" />
     </q-avatar>
   </div>
+  <q-separator spaced="24px" />
   <ImgSelect></ImgSelect>
   <q-btn
     :loading="loading"
