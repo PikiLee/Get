@@ -2,6 +2,9 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { onAuthStateChanged } from 'firebase/auth';
+import userService from '../services/userService';
+import { useUserStore } from '../stores/userStore';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,5 +21,13 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    userService.getUserProfile();
+  } else {
+    const userStore = useUserStore();
+    userStore.user = null;
+  }
+});
 connectAuthEmulator(auth, 'http://localhost:9099');
 connectStorageEmulator(storage, 'localhost', 9199);

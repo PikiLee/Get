@@ -7,7 +7,8 @@ import {
 } from 'vue-router';
 
 import routes from './routes';
-import { getAuth } from 'firebase/auth';
+import { auth } from '../services/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 /*
  * If not building with SSR mode, you can
@@ -36,9 +37,17 @@ export default route(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach((to) => {
-    if (to.meta.requiresAuth && !getAuth().currentUser) {
-      return { name: 'signUp' };
-    }
+    return new Promise((resolve) => {
+      onAuthStateChanged(auth, (user) => {
+        if (to.meta.requiresAuth && !user) {
+          console.log(user);
+          return resolve({ name: 'signUp' });
+          // ...
+        } else {
+          return resolve(true);
+        }
+      });
+    });
   });
 
   return Router;
