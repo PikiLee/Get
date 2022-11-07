@@ -15,30 +15,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import userService from 'src/services/userService';
-import { useIntervalFn } from '@vueuse/core';
-
-const resendInterval = 3;
-
-const count = ref(resendInterval);
-
-const { pause, resume } = useIntervalFn(() => {
-  count.value -= 1;
-  if (count.value <= 0) {
-    pause();
-  }
-}, 1000);
+import { useCountdown } from 'src/utils/useCountdown';
 
 const props = defineProps<{
   email: string;
 }>();
 
 const resend = () => {
-  count.value = resendInterval;
+  reset();
   resume();
   userService.signInOrLogInViaEmailLink(props.email);
 };
+
+const { count, reset, resume } = useCountdown(60);
 </script>
 
 <style scoped></style>

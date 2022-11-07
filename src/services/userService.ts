@@ -11,6 +11,7 @@ import {
   isSignInWithEmailLink,
   signInWithEmailLink,
   updatePassword,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import storageService from './storageService';
 
@@ -131,6 +132,9 @@ const completeSignInViaEmailLink = (email: string) => {
   }
 };
 
+const sendResetPasswordEmail = (email: string) => {
+  return sendPasswordResetEmail(auth, email);
+};
 export default {
   createUser,
   checkIfEmailExists,
@@ -141,4 +145,5 @@ export default {
   completeSignInViaEmailLink,
   updateUsernameAndIconUrl,
   updatePs,
+  sendResetPasswordEmail,
 };
