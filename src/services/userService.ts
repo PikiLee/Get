@@ -10,7 +10,7 @@ import {
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signInWithEmailLink,
-  updatePassword,
+  EmailAuthProvider,
   sendPasswordResetEmail,
 } from 'firebase/auth';
 import storageService from './storageService';
@@ -127,6 +127,20 @@ const completeSignInViaEmailLink = (email: string) => {
 const sendResetPasswordEmail = (email: string) => {
   return sendPasswordResetEmail(auth, email);
 };
+
+const canUserSignInWithEmailPassword = (email: string) => {
+  return fetchSignInMethodsForEmail(auth, email).then((signInMethods) => {
+    if (
+      signInMethods.indexOf(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD) !=
+      -1
+    ) {
+      console.log('hr1');
+      return true;
+    }
+    console.log('hr2');
+    return false;
+  });
+};
 export default {
   createUser,
   checkIfEmailExists,
@@ -137,4 +151,5 @@ export default {
   completeSignInViaEmailLink,
   updateUsernameAndIconUrl,
   sendResetPasswordEmail,
+  canUserSignInWithEmailPassword,
 };

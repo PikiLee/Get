@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-h5 text-center" v-if="count > 0">邮件已发送</h2>
+    <h2 class="text-h5 text-center" v-if="count > 0">邮件已发送，请查收</h2>
     <p class="text-center" v-if="count > 0">{{ count }}秒后可以重新发送邮件</p>
     <div class="row justify-center">
       <q-btn
@@ -29,6 +29,7 @@ const resend = () => {
 };
 
 const { count, reset, resume } = useCountdown(60);
+resume();
 </script>
 
 <style scoped></style>
