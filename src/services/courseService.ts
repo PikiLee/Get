@@ -1,3 +1,4 @@
+import { useUserStore } from './../stores/userStore';
 import { NewCourse, Course } from './../types/course';
 import { db } from './firebase';
 import {
@@ -6,8 +7,8 @@ import {
   getDoc,
   getDocs,
   query,
-  doc,
   updateDoc,
+  doc,
 } from 'firebase/firestore';
 import { useCourseStore } from 'src/stores/courseStore';
 
@@ -15,7 +16,9 @@ const courseStore = useCourseStore();
 
 const fetchCourses = async () => {
   try {
-    const q = query(collection(db, 'courses'));
+    const userStore = useUserStore();
+    if (!userStore.user) throw Error;
+    const q = query(collection(db, 'users', userStore.user.id, 'courses'));
 
     const querySnapshot = await getDocs(q);
     const courses: Course[] = [];
@@ -30,21 +33,31 @@ const fetchCourses = async () => {
 };
 
 const postCourse = (newCourse: NewCourse) => {
-  // Add a new document with a generated id.
-  return addDoc(collection(db, 'courses'), newCourse)
-    .then((docRef) => {
-      return getDoc(docRef);
-    })
-    .then((docSnap) => {
-      if (docSnap.exists()) {
-        const data = { ...docSnap.data(), id: docSnap.id } as Course;
-        courseStore.addNewCourse(data);
-      }
-    });
+  const userStore = useUserStore();
+
+  if (userStore.user) {
+    return addDoc(
+      collection(db, 'users', userStore.user.id, 'courses'),
+      newCourse
+    )
+      .then((docRef) => {
+        return getDoc(docRef);
+      })
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const data = { ...docSnap.data(), id: docSnap.id } as Course;
+          courseStore.addNewCourse(data);
+        }
+      });
+  } else {
+    return Promise.reject();
+  }
 };
 
 const updateCourse = async (course: Course) => {
-  const docRef = doc(db, 'courses', course.id);
+  const userStore = useUserStore();
+  if (!userStore.user) return Promise.reject();
+  const docRef = doc(db, 'users', userStore.user.id, 'courses', course.id);
 
   // Set the "capital" field of the city 'DC'
   return await updateDoc(docRef, {
