@@ -7,8 +7,20 @@ export const useCourseStore = defineStore('course', {
   }),
   getters: {},
   actions: {
-    addNewCourse(course: Course) {
-      this.courses.push(course);
+    setCourses(courses: Course[]) {
+      this.courses = courses.sort((a, b) => {
+        if (a.status !== b.status) {
+          return a.status > b.status ? 1 : -1;
+        } else {
+          return a.createdAt > b.createdAt ? 1 : -1;
+        }
+      });
     },
+    addNewCourse(course: Course) {
+      this.courses.unshift(course);
+    },
+    // updateCourse() {
+
+    // }
   },
 });

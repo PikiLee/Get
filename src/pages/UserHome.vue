@@ -46,6 +46,9 @@
                     title="编辑课程名"
                     auto-save
                     v-slot="scope"
+                    @save="(value: string) => {
+                      courseService.updateCourse(props.row.id, {name: value})
+                    }"
                   >
                     <q-input
                       v-model="scope.value"
@@ -68,10 +71,13 @@
                 >
                   {{ courseStatuses[props.row.status].label }}
                   <q-popup-edit
-                    v-model="props.row.status"
+                    v-model.number="props.row.status"
                     title="编辑状态"
                     auto-save
                     v-slot="scope"
+                    @save="(value: number) => {
+                      courseService.updateCourse(props.row.id, {status: value})
+                    }"
                   >
                     <q-select
                       filled
@@ -101,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, computed, reactive, ref } from 'vue';
+import { onBeforeMount, computed, reactive } from 'vue';
 import courseService from '../services/courseService';
 import { useQuasar } from 'quasar';
 import { useCourseStore } from 'src/stores/courseStore';
@@ -114,7 +120,9 @@ const courseStore = useCourseStore();
 const $q = useQuasar();
 
 onBeforeMount(() => {
-  courseService.fetchCourses();
+  if (courseStore.courses.length === 0) {
+    courseService.fetchCourses();
+  }
 });
 
 const displayOptions = reactive({
@@ -164,7 +172,6 @@ const addCourse = () => {
     cancel: true,
     persistent: true,
   }).onOk((data) => {
-    // console.log('>>>> OK, received', data)
     courseService
       .postCourse({
         name: data,
@@ -188,10 +195,6 @@ const addCourse = () => {
 const navToCourse = (courseId: number) => {
   router.push({ name: 'course', params: { courseId } });
 };
-
-courseStore.$subscribe((mutation) => {
-  courseService.updateCourse(mutation.events.target);
-});
 </script>
 
 <!-- <style scoped></style> -->

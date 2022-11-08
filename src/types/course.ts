@@ -10,4 +10,5 @@ export interface NewCourse {
 
 export interface Course extends NewCourse {
   id: string;
+  createdAt: Date;
 }

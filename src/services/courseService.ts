@@ -9,6 +9,7 @@ import {
   query,
   updateDoc,
   doc,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { useCourseStore } from 'src/stores/courseStore';
 import { LoadingBar } from 'quasar';
@@ -26,11 +27,17 @@ const fetchCourses = async () => {
     const courses: Course[] = [];
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
-      courses.push({ ...doc.data(), id: doc.id } as Course);
+      const course = {
+        ...doc.data(),
+        id: doc.id,
+      } as Course;
+      course.createdAt = doc.data().createdAt.toDate();
+      courses.push(course);
     });
-    courseStore.courses = courses;
+    courseStore.setCourses(courses);
     LoadingBar.stop();
   } catch (err) {
+    console.log(err);
     throw err;
   }
 };
@@ -39,10 +46,11 @@ const postCourse = (newCourse: NewCourse) => {
   const userStore = useUserStore();
 
   if (userStore.user) {
-    return addDoc(
-      collection(db, 'users', userStore.user.id, 'courses'),
-      newCourse
-    )
+    LoadingBar.start();
+    return addDoc(collection(db, 'users', userStore.user.id, 'courses'), {
+      ...newCourse,
+      createdAt: serverTimestamp(),
+    })
       .then((docRef) => {
         return getDoc(docRef);
       })
@@ -51,22 +59,37 @@ const postCourse = (newCourse: NewCourse) => {
           const data = { ...docSnap.data(), id: docSnap.id } as Course;
           courseStore.addNewCourse(data);
         }
+      })
+      .finally(() => {
+        LoadingBar.stop();
       });
   } else {
     return Promise.reject();
   }
 };
 
-const updateCourse = async (course: Course) => {
+const updateCourse = async (
+  courseId: string,
+  fields: {
+    status?: number;
+    name?: string;
+  }
+) => {
   const userStore = useUserStore();
   if (!userStore.user) return Promise.reject();
-  const docRef = doc(db, 'users', userStore.user.id, 'courses', course.id);
+  const docRef = doc(db, 'users', userStore.user.id, 'courses', courseId);
+  const fieldsToChange = {} as {
+    status?: number;
+    name?: string;
+  };
+  if (fields.name) {
+    fieldsToChange.name = fields.name;
+  }
+  if (fields.status) {
+    fieldsToChange.status = fields.status;
+  }
 
-  // Set the "capital" field of the city 'DC'
-  return await updateDoc(docRef, {
-    name: course.name,
-    status: course.status,
-  });
+  return await updateDoc(docRef, fieldsToChange);
 };
 
 export default {
