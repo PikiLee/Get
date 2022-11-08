@@ -69,15 +69,27 @@ const fetchChapters = async (courseId: string) => {
   }
 };
 
-const updateChapter = async (courseId: string, chapter: Chapter) => {
+const updateChapter = async (
+  courseId: string,
+  chapterId: string,
+  fields: {
+    name?: string;
+    stage?: string;
+    lastDate?: number;
+  }
+) => {
   try {
-    const docRef = getChapterDoc(courseId, chapter.id);
-    // Set the "capital" field of the city 'DC'
-    return await updateDoc(docRef, {
-      name: chapter.name,
-      stage: chapter.stage,
-      lastDate: chapter.lastDate,
-    });
+    const docRef = getChapterDoc(courseId, chapterId);
+
+    const fieldsToChange = { ...fields };
+    let key: keyof typeof fieldsToChange;
+    for (key in fieldsToChange) {
+      if (!fieldsToChange[key]) {
+        delete fieldsToChange[key];
+      }
+    }
+
+    return await updateDoc(docRef, fieldsToChange);
   } catch (err) {
     throw err;
   }

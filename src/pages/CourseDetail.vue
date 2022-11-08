@@ -65,6 +65,9 @@
                   v-model="props.row.stage"
                   v-slot="scope"
                   auto-save
+                  @save="(value: string) => {
+                    chapterService.updateChapter(courseId, props.row.id, {stage: value})
+                  }"
                 >
                   <q-select
                     v-model="scope.value"
@@ -267,10 +270,6 @@ function addChapterPrompt() {
       });
   });
 }
-
-chapterStore.$subscribe((mutation) => {
-  chapterService.updateChapter(courseId, mutation.events.target);
-});
 </script>
 
 <style lang="scss" scoped></style>
