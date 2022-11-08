@@ -13,6 +13,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { LoadingBar } from 'quasar';
 
 const chapterStore = useChapterStore();
 
@@ -46,6 +47,7 @@ const getChapterDoc = (courseId: string, chapterId: string) => {
 const postChapter = async (courseId: string, newChapter: NewChapter) => {
   // Add a new document with a generated id.
   try {
+    LoadingBar.start();
     const chapterRef = await addDoc(getChapterCollection(courseId), {
       ...newChapter,
       createdAt: serverTimestamp(),
@@ -57,6 +59,7 @@ const postChapter = async (courseId: string, newChapter: NewChapter) => {
       id: docSnap.id,
       createdAt: docSnap.data()?.createdAt.toDate(),
     } as Chapter);
+    LoadingBar.stop();
   } catch (err) {
     throw err;
   }
@@ -64,6 +67,8 @@ const postChapter = async (courseId: string, newChapter: NewChapter) => {
 
 const fetchChapters = async (courseId: string) => {
   try {
+    LoadingBar.start();
+    if (chapterStore.chapters.length !== 0) return;
     const q = query(getChapterCollection(courseId));
 
     const querySnapshot = await getDocs(q);
@@ -76,6 +81,7 @@ const fetchChapters = async (courseId: string) => {
       } as Chapter);
     });
     chapterStore.setChapters(chapters);
+    LoadingBar.stop();
   } catch (err) {
     throw err;
   }
@@ -91,6 +97,7 @@ const updateChapter = async (
   }
 ) => {
   try {
+    LoadingBar.start();
     const docRef = getChapterDoc(courseId, chapterId);
 
     const fieldsToChange = { ...fields };
@@ -101,7 +108,9 @@ const updateChapter = async (
       }
     }
 
-    return await updateDoc(docRef, fieldsToChange);
+    const res = await updateDoc(docRef, fieldsToChange);
+    LoadingBar.stop();
+    return res;
   } catch (err) {
     throw err;
   }
@@ -109,8 +118,10 @@ const updateChapter = async (
 
 const deleteChapter = async (courseId: string, chapterId: string) => {
   try {
+    LoadingBar.start();
     await deleteDoc(getChapterDoc(courseId, chapterId));
     chapterStore.deleteChapter(chapterId);
+    LoadingBar.stop();
   } catch (err) {
     throw err;
   }
