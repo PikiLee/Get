@@ -33,64 +33,65 @@
       <template v-slot:item="props">
         <div class="col-xs-12 col-sm-6 col-md-3">
           <q-card :style="{ width: '100%' }">
-            <q-card-section horizontal>
-              <q-img src="https://placeimg.com/500/300/nature" class="col-xs-5">
-              </q-img>
-              <q-card-section class="col-xs-7">
-                <q-card-section>
-                  <header class="relative-position text-h5">
-                    <span>
-                      {{ props.row.name }}
-                      <q-popup-edit
-                        v-model="props.row.name"
-                        title="编辑课程名"
-                        auto-save
-                        v-slot="scope"
-                      >
-                        <q-input
-                          v-model="scope.value"
-                          dense
-                          autofocus
-                          counter
-                          @keyup.enter="scope.set"
-                        />
-                      </q-popup-edit>
-                    </span>
-
-                    <q-badge
-                      :color="courseStatuses[props.row.status].color"
-                      floating
-                      align="bottom"
-                      >{{ courseStatuses[props.row.status].label }}
-                      <q-popup-edit
-                        v-model="props.row.status"
-                        title="编辑状态"
-                        auto-save
-                        v-slot="scope"
-                      >
-                        <q-select
-                          filled
-                          v-model="scope.value"
-                          :options="courseStatuses"
-                          label="状态"
-                          map-options
-                          emit-value
-                        />
-                      </q-popup-edit>
-                    </q-badge>
-                  </header>
-                </q-card-section>
-                <q-card-actions class="row justify-end">
-                  <q-btn
-                    push
-                    color="white"
-                    text-color="primary"
-                    round
-                    icon="east"
-                    @click="navToCourse(props.row.id)"
-                  />
-                </q-card-actions>
-              </q-card-section>
+            <q-img
+              src="https://placeimg.com/500/300/nature"
+              class="col-xs-5 rounded-borders"
+              :ratio="16 / 9"
+            >
+              <div class="absolute-bottom text-h5 text-center">
+                <span>
+                  {{ props.row.name }}
+                  <q-popup-edit
+                    v-model="props.row.name"
+                    title="编辑课程名"
+                    auto-save
+                    v-slot="scope"
+                  >
+                    <q-input
+                      v-model="scope.value"
+                      dense
+                      autofocus
+                      counter
+                      @keyup.enter="scope.set"
+                    />
+                  </q-popup-edit>
+                </span>
+              </div>
+            </q-img>
+            <q-card-section>
+              <div class="row justify-around items-center">
+                <q-chip
+                  :color="courseStatuses[props.row.status].color"
+                  text-color="white"
+                  class="cursor-pointer"
+                  icon="edit_square"
+                >
+                  {{ courseStatuses[props.row.status].label }}
+                  <q-popup-edit
+                    v-model="props.row.status"
+                    title="编辑状态"
+                    auto-save
+                    v-slot="scope"
+                  >
+                    <q-select
+                      filled
+                      v-model="scope.value"
+                      :options="courseStatuses"
+                      label="状态"
+                      map-options
+                      emit-value
+                    />
+                  </q-popup-edit>
+                </q-chip>
+                <q-btn
+                  push
+                  text-color="grey-7"
+                  round
+                  flat
+                  icon="chevron_right"
+                  @click="navToCourse(props.row.id)"
+                />
+              </div>
             </q-card-section>
           </q-card>
         </div>
