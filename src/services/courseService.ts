@@ -11,11 +11,13 @@ import {
   doc,
 } from 'firebase/firestore';
 import { useCourseStore } from 'src/stores/courseStore';
+import { LoadingBar } from 'quasar';
 
 const courseStore = useCourseStore();
 
 const fetchCourses = async () => {
   try {
+    LoadingBar.start();
     const userStore = useUserStore();
     if (!userStore.user) throw Error;
     const q = query(collection(db, 'users', userStore.user.id, 'courses'));
@@ -27,6 +29,7 @@ const fetchCourses = async () => {
       courses.push({ ...doc.data(), id: doc.id } as Course);
     });
     courseStore.courses = courses;
+    LoadingBar.stop();
   } catch (err) {
     throw err;
   }

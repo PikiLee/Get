@@ -109,6 +109,10 @@ module.exports = configure(function (/* ctx */) {
           info: '#FE86C8',
           warning: '#FFC914',
         },
+        loadingBar: {
+          color: 'secondary',
+          size: '10px',
+        },
       },
 
       // iconSet: 'material-icons', // Quasar icon set
@@ -122,7 +126,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Dialog', 'Notify'],
+      plugins: ['Dialog', 'Notify', 'LoadingBar'],
     },
 
     // animations: 'all', // --- includes all animations
