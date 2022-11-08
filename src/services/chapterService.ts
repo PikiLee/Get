@@ -10,6 +10,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -45,10 +46,17 @@ const getChapterDoc = (courseId: string, chapterId: string) => {
 const postChapter = async (courseId: string, newChapter: NewChapter) => {
   // Add a new document with a generated id.
   try {
-    const chapterRef = await addDoc(getChapterCollection(courseId), newChapter);
+    const chapterRef = await addDoc(getChapterCollection(courseId), {
+      ...newChapter,
+      createdAt: serverTimestamp(),
+    });
     const docSnap = await getDoc(chapterRef);
 
-    chapterStore.addChapter({ ...docSnap.data(), id: docSnap.id } as Chapter);
+    chapterStore.addChapter({
+      ...docSnap.data(),
+      id: docSnap.id,
+      createdAt: docSnap.data()?.createdAt.toDate(),
+    } as Chapter);
   } catch (err) {
     throw err;
   }
@@ -61,9 +69,13 @@ const fetchChapters = async (courseId: string) => {
     const querySnapshot = await getDocs(q);
     const chapters: Chapter[] = [];
     querySnapshot.forEach((doc) => {
-      chapters.push({ ...doc.data(), id: doc.id } as Chapter);
+      chapters.push({
+        ...doc.data(),
+        id: doc.id,
+        createdAt: doc.data()?.createdAt.toDate(),
+      } as Chapter);
     });
-    chapterStore.chapters = chapters;
+    chapterStore.setChapters(chapters);
   } catch (err) {
     throw err;
   }

@@ -7,6 +7,21 @@ export const useChapterStore = defineStore('chapter', {
   }),
   getters: {},
   actions: {
+    setChapters(chapters: Chapter[]) {
+      this.chapters = chapters.sort((a, b) => {
+        if (a.stage === b.stage) {
+          if (a.createdAt === b.createdAt) {
+            return 0;
+          } else if (a.createdAt > b.createdAt) {
+            return 1;
+          } else {
+            return -1;
+          }
+        } else {
+          return a.stage > b.stage ? -1 : 1;
+        }
+      });
+    },
     addChapter(chapter: Chapter) {
       this.chapters.push(chapter);
     },
