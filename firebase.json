@@ -11,7 +11,7 @@
     },
     "singleProjectMode": true,
     "firestore": {
-      "port": 8080
+      "port": 8070
     }
   },
   "storage": {

@@ -1,157 +1,128 @@
 <template>
   <q-page class="">
-    <q-table
-      grid
-      :rows="chapterStore.chapters"
-      row-key="name"
-      :pagination="{ rowsPerPage: 0 }"
-      separator="vertical"
-      hide-bottom
-    >
-      <!-- Table Top -->
-      <template v-slot:top>
-        <q-btn
-          color="primary"
-          icon="add"
-          label="添加章节"
-          @click="addChapterPrompt"
-        />
-      </template>
-      <!-- Table Card -->
-      <template v-slot:item="props">
-        <div
-          class="q-pa-xs col-xs-12 col-md-4 col-lg-3 grid-style-transition"
-          :style="props.selected ? 'transform: scale(0.95);' : ''"
+    <div>
+      <q-btn
+        color="primary"
+        icon="add"
+        label="添加章节"
+        @click="addChapterPrompt"
+      />
+      <q-list bordered separator id="chapters-draggable-container">
+        <q-item
+          clickable
+          v-ripple
+          v-for="chapter in chapterStore.chapters"
+          :key="chapter.id"
+          class="chapter-card-draggable"
         >
-          <q-card>
-            <!-- Title -->
-            <q-card-section>
-              <header class="q-ma-none text-h4 row items-center">
-                <q-badge class="q-mr-sm">
-                  <span class="text-subtitle1">
-                    {{ props.rowIndex + 1 }}
-                  </span>
-                </q-badge>
-                <span class="col-grow text-center">
-                  {{ props.row.name }}
-                  <q-tooltip anchor="top middle" self="bottom middle">
-                    点击编辑
-                  </q-tooltip>
+          <q-item-section side>
+            <q-icon name="menu" color="grey-7" class="my-handle"></q-icon>
+          </q-item-section>
+          <q-item-section avatar
+            ><q-badge :color="stages[chapter.stage].color">
+              <span class="text-subtitle2">
+                {{ stages[chapter.stage].label }}
+              </span>
+              <q-tooltip anchor="top middle" self="bottom middle">
+                点击编辑
+              </q-tooltip>
+            </q-badge>
+            <q-popup-edit
+              v-model="chapter.stage"
+              v-slot="scope"
+              auto-save
+              @save="(value: string) => {
+            chapterService.updateChapter(courseId, chapter.id, {stage: value})
+          }"
+            >
+              <q-select
+                v-model="scope.value"
+                :options="stages"
+                label="进度"
+                map-options
+                emit-value
+              >
+              </q-select> </q-popup-edit
+          ></q-item-section>
+          <q-item-section>
+            <q-item-label>
+              <span class="col-grow text-center">
+                {{ chapter.name }}
+                <q-tooltip anchor="top middle" self="bottom middle">
+                  点击编辑
+                </q-tooltip>
+                <q-popup-edit v-model="chapter.name" v-slot="scope" auto-save>
+                  <q-input v-model="scope.value" dense autofocus />
+                </q-popup-edit>
+              </span>
+            </q-item-label>
+            <q-item-label caption>
+              <div class="row justify-around items-center">
+                <q-card-section>
+                  <p class="q-ma-none">
+                    {{ date.formatDate(chapter.lastDate, 'YYYY-MM-DD') }}
+                    <q-tooltip anchor="top middle" self="bottom middle">
+                      点击编辑
+                    </q-tooltip>
+                  </p>
                   <q-popup-edit
-                    v-model="props.row.name"
+                    v-model="chapter.lastDate"
                     v-slot="scope"
                     auto-save
                   >
-                    <q-input v-model="scope.value" dense autofocus />
+                    <q-date v-model="scope.value" />
                   </q-popup-edit>
-                </span>
-              </header>
-            </q-card-section>
+                </q-card-section>
 
-            <q-separator />
-
-            <!-- Stage -->
-            <div class="row justify-around items-center">
-              <q-card-section>
-                <q-badge :color="stages[props.row.stage].color">
-                  <span class="text-subtitle2">
-                    {{ stages[props.row.stage].label }}
-                  </span>
-                  <q-tooltip anchor="top middle" self="bottom middle">
-                    点击编辑
-                  </q-tooltip>
-                </q-badge>
-                <q-popup-edit
-                  v-model="props.row.stage"
-                  v-slot="scope"
-                  auto-save
-                  @save="(value: string) => {
-                    chapterService.updateChapter(courseId, props.row.id, {stage: value})
-                  }"
-                >
-                  <q-select
-                    v-model="scope.value"
-                    :options="stages"
-                    label="进度"
-                    map-options
-                    emit-value
-                  >
-                  </q-select>
-                </q-popup-edit>
-              </q-card-section>
-
-              <!-- Circular Progress -->
-              <q-card-section>
-                <q-circular-progress
-                  rounded
-                  :value="((props.row.stage + 1) / 5) * 100"
-                  size="50px"
-                  :thickness="0.22"
-                  color="primary"
-                  track-color="grey-3"
-                  class="q-ma-md"
-                />
-              </q-card-section>
-            </div>
-
-            <!-- Date -->
-            <div class="row justify-around items-center">
-              <q-card-section>
-                <p class="q-ma-none">
-                  {{ date.formatDate(props.row.lastDate, 'YYYY-MM-DD') }}
-                  <q-tooltip anchor="top middle" self="bottom middle">
-                    点击编辑
-                  </q-tooltip>
-                </p>
-                <q-popup-edit
-                  v-model="props.row.lastDate"
-                  v-slot="scope"
-                  auto-save
-                >
-                  <q-date v-model="scope.value" />
-                </q-popup-edit>
-              </q-card-section>
-
-              <q-card-section>
-                {{
-                  date.formatDate(
-                    props.row.lastDate +
-                      stages[props.row.stage].waitDays * 1000 * 60 * 60 * 24,
-                    'YYYY-MM-DD'
-                  )
-                }}
-              </q-card-section>
-            </div>
-
-            <q-separator />
-
-            <!-- Actions -->
-            <q-card-actions>
-              <div
-                class="row justify-center items-center"
-                :style="{ width: '100%' }"
-              >
-                <q-btn
-                  flat
-                  color="negative"
-                  icon="delete"
-                  @click="confirmDelete(props.row.id)"
-                />
+                <q-card-section>
+                  {{
+                    date.formatDate(
+                      chapter.lastDate +
+                        stages[chapter.stage].waitDays * 1000 * 60 * 60 * 24,
+                      'YYYY-MM-DD'
+                    )
+                  }}
+                </q-card-section>
               </div>
-            </q-card-actions>
-          </q-card>
-        </div>
-      </template>
-    </q-table>
+            </q-item-label>
+          </q-item-section>
+          <q-item-section avatar>
+            <q-circular-progress
+              rounded
+              :value="((chapter.stage + 1) / 5) * 100"
+              size="50px"
+              :thickness="0.22"
+              color="primary"
+              track-color="grey-3"
+              class="q-ma-md"
+            />
+          </q-item-section>
+          <q-item-section side>
+            <div
+              class="row justify-center items-center"
+              :style="{ width: '100%' }"
+            >
+              <q-btn
+                flat
+                color="negative"
+                icon="delete"
+                @click="confirmDelete(chapter.id)"
+              />
+            </div>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { date, useQuasar } from 'quasar';
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, onMounted } from 'vue';
 import chapterService from 'src/services/chapterService';
 import { onBeforeRouteUpdate, useRoute } from 'vue-router';
 import { useChapterStore } from './../stores/chapterStore';
+import Sortable from 'sortablejs';
 
 const route = useRoute();
 const $q = useQuasar();
@@ -243,7 +214,7 @@ function addChapterPrompt() {
     message: '请输入章节名',
     prompt: {
       model: '',
-      isValid: (val) => val.length > 0, // << here is the magic
+      isValid: (val) => val.length > 0, // <<script here is the magic
       type: 'text', // optional
     },
     cancel: true,
@@ -270,6 +241,20 @@ function addChapterPrompt() {
       });
   });
 }
+
+// drag
+onMounted(() => {
+  const sortable = new Sortable(
+    document.querySelector('#chapters-draggable-container') as HTMLElement,
+    {
+      onStart: function (evt) {
+        console.log(evt);
+      },
+      handle: '.my-handle',
+      draggable: '.chapter-card-draggable',
+    }
+  );
+});
 </script>
 
 <style lang="scss" scoped></style>
