@@ -45,52 +45,45 @@
               </q-select> </q-popup-edit
           ></q-item-section>
           <q-item-section>
-            <q-item-label>
-              <span class="col-grow text-center">
-                {{ chapter.name }}
-                <q-tooltip anchor="top middle" self="bottom middle">
-                  点击编辑
-                </q-tooltip>
-                <q-popup-edit v-model="chapter.name" v-slot="scope" auto-save>
-                  <q-input v-model="scope.value" dense autofocus />
-                </q-popup-edit>
-              </span>
-            </q-item-label>
-            <q-item-label caption>
-              <div class="row justify-around items-center">
-                <q-card-section>
-                  <p class="q-ma-none">
-                    {{ date.formatDate(chapter.lastDate, 'YYYY-MM-DD') }}
-                    <q-tooltip anchor="top middle" self="bottom middle">
-                      点击编辑
-                    </q-tooltip>
-                  </p>
-                  <q-popup-edit
-                    v-model="chapter.lastDate"
-                    v-slot="scope"
-                    auto-save
-                  >
-                    <q-date v-model="scope.value" />
-                  </q-popup-edit>
-                </q-card-section>
-
-                <q-card-section>
-                  {{
-                    date.formatDate(
-                      chapter.lastDate +
-                        stages[chapter.stage].waitDays * 1000 * 60 * 60 * 24,
-                      'YYYY-MM-DD'
-                    )
-                  }}
-                </q-card-section>
-              </div>
-            </q-item-label>
+            <h5 class="text-center q-ma-none">
+              {{ chapter.name }}
+              <q-tooltip anchor="top middle" self="bottom middle">
+                点击编辑
+              </q-tooltip>
+              <q-popup-edit v-model="chapter.name" v-slot="scope" auto-save>
+                <q-input v-model="scope.value" dense autofocus />
+              </q-popup-edit>
+            </h5>
           </q-item-section>
+          <q-item-section side>
+            <q-item-label> 上次复习时间 </q-item-label>
+            <p class="q-ma-none">
+              {{ date.formatDate(chapter.lastDate, 'YYYY-MM-DD') }}
+              <q-tooltip anchor="top middle" self="bottom middle">
+                点击编辑
+              </q-tooltip>
+              <q-popup-edit v-model="chapter.lastDate" v-slot="scope" auto-save>
+                <q-date v-model="scope.value" />
+              </q-popup-edit>
+            </p>
+          </q-item-section>
+
+          <q-item-section side>
+            <q-item-label> 下次复习时间 </q-item-label>
+            {{
+              date.formatDate(
+                chapter.lastDate +
+                  stages[chapter.stage].waitDays * 1000 * 60 * 60 * 24,
+                'YYYY-MM-DD'
+              )
+            }}
+          </q-item-section>
+
           <q-item-section avatar>
             <q-circular-progress
               rounded
               :value="((chapter.stage + 1) / 5) * 100"
-              size="50px"
+              size="30px"
               :thickness="0.22"
               color="primary"
               track-color="grey-3"
