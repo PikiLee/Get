@@ -9,4 +9,5 @@ export interface NewChapter {
 export interface Chapter extends NewChapter {
   id: string;
   createdAt: Date;
+  order: number;
 }

@@ -9,16 +9,12 @@ export const useChapterStore = defineStore('chapter', {
   actions: {
     setChapters(chapters: Chapter[]) {
       this.chapters = chapters.sort((a, b) => {
-        if (a.stage === b.stage) {
-          if (a.createdAt === b.createdAt) {
-            return 0;
-          } else if (a.createdAt > b.createdAt) {
-            return 1;
-          } else {
-            return -1;
-          }
+        if (a.order > b.order) {
+          return 1;
+        } else if (a.order < b.order) {
+          return -1;
         } else {
-          return a.stage > b.stage ? -1 : 1;
+          return 0;
         }
       });
     },

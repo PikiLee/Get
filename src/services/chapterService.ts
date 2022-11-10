@@ -16,6 +16,7 @@ import { db } from './firebase';
 import { LoadingBar } from 'quasar';
 
 const chapterStore = useChapterStore();
+const orderInterval = 100;
 
 const getChapterCollection = (courseId: string) => {
   const userStore = useUserStore();
@@ -33,6 +34,7 @@ const getChapterCollection = (courseId: string) => {
 const getChapterDoc = (courseId: string, chapterId: string) => {
   const userStore = useUserStore();
   if (!userStore.user) throw Error;
+
   return doc(
     db,
     'users',
@@ -48,8 +50,16 @@ const postChapter = async (courseId: string, newChapter: NewChapter) => {
   // Add a new document with a generated id.
   try {
     LoadingBar.start();
+    const chapterStore = useChapterStore();
+    let order = orderInterval;
+    if (chapterStore.chapters.length !== 0) {
+      order =
+        chapterStore.chapters[chapterStore.chapters.length - 1].order +
+        orderInterval;
+    }
     const chapterRef = await addDoc(getChapterCollection(courseId), {
       ...newChapter,
+      order,
       createdAt: serverTimestamp(),
     });
     const docSnap = await getDoc(chapterRef);
