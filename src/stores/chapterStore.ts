@@ -54,7 +54,7 @@ export const useChapterStore = defineStore('chapter', {
 
         oldChapter.order = order;
 
-        this.chapters.splice(newIndex, 0, oldChapter);
+        this.chapters.splice(newIndex + 1, 0, oldChapter);
         this.chapters.splice(oldIndex, 1);
       }
 

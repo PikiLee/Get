@@ -270,8 +270,8 @@ onMounted(() => {
         ) {
           chapterService.exchangeOrder(
             courseId,
-            evt.newDraggableIndex,
-            evt.oldDraggableIndex
+            evt.oldDraggableIndex,
+            evt.newDraggableIndex
           );
         }
       },
