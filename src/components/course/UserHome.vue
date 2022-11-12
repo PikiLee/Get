@@ -1,4 +1,13 @@
 <template>
+  <q-page-sticky position="bottom-right" :offset="[18, 18]">
+    <q-btn
+      fab
+      color="primary"
+      icon-right="add"
+      label="添加新课程"
+      @click="addCourse"
+    />
+  </q-page-sticky>
   <q-table
     grid
     :rows="courses"
@@ -20,13 +29,6 @@
             label="显示搁置中的课程"
           />
         </div>
-        <q-btn
-          color="primary"
-          icon-right="add"
-          label="添加新课程"
-          @click="addCourse"
-        >
-        </q-btn>
       </div>
     </template>
     <template v-slot:item="props">

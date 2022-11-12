@@ -1,12 +1,15 @@
 <template>
   <q-page class="">
-    <div>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn
+        fab
         color="primary"
         icon="add"
         label="添加章节"
         @click="addChapterPrompt"
       />
+    </q-page-sticky>
+    <div>
       <q-list bordered separator id="chapters-draggable-container">
         <q-item
           clickable

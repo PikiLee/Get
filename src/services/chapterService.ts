@@ -33,7 +33,9 @@ const getChapterCollection = (courseId: string) => {
 
 const getChapterDoc = (courseId: string, chapterId: string) => {
   const userStore = useUserStore();
-  if (!userStore.user) throw Error;
+  if (!userStore.user) {
+    throw Error;
+  }
 
   return doc(
     db,
@@ -108,7 +110,6 @@ const updateChapter = async (
   }
 ) => {
   try {
-    LoadingBar.start();
     const docRef = getChapterDoc(courseId, chapterId);
 
     const fieldsToChange = { ...fields };
@@ -120,7 +121,6 @@ const updateChapter = async (
     }
 
     const res = await updateDoc(docRef, fieldsToChange);
-    LoadingBar.stop();
     return res;
   } catch (err) {
     throw err;
