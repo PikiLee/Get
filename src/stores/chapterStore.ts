@@ -60,5 +60,12 @@ export const useChapterStore = defineStore('chapter', {
 
       console.log('hr1');
     },
+    updateChapter(chapterId: string, date: number) {
+      this.chapters.forEach((chapter) => {
+        if (chapter.id === chapterId) {
+          chapter.lastDate = date;
+        }
+      });
+    },
   },
 });

@@ -53,7 +53,14 @@
               <q-tooltip anchor="top middle" self="bottom middle">
                 点击编辑
               </q-tooltip>
-              <q-popup-edit v-model="chapter.name" v-slot="scope" auto-save>
+              <q-popup-edit
+                v-model="chapter.name"
+                v-slot="scope"
+                auto-save
+                @save="(value: string) => {
+                chapterService.updateChapter(courseId, chapter.id, {name: value})
+              }"
+              >
                 <q-input v-model="scope.value" dense autofocus />
               </q-popup-edit>
             </h5>
@@ -65,7 +72,19 @@
               <q-tooltip anchor="top middle" self="bottom middle">
                 点击编辑
               </q-tooltip>
-              <q-popup-edit v-model="chapter.lastDate" v-slot="scope" auto-save>
+              <q-popup-edit
+                :modelValue="date.formatDate(chapter.lastDate, 'YYYY/MM/DD')"
+                v-slot="scope"
+                auto-save
+                @save="
+                  (value: string) => {
+                    chapterStore.updateChapter(chapter.id, date.extractDate(value, 'YYYY/MM/DD').valueOf())
+                    chapterService.updateChapter(courseId, chapter.id, {
+                      lastDate: date.extractDate(value, 'YYYY/MM/DD').valueOf(),
+                    });
+                  }
+                "
+              >
                 <q-date v-model="scope.value" />
               </q-popup-edit>
             </p>
@@ -244,6 +263,7 @@ onMounted(() => {
     document.querySelector('#chapters-draggable-container') as HTMLElement,
     {
       onEnd: function (evt) {
+        console.log(evt);
         if (
           evt.oldDraggableIndex !== undefined &&
           evt.newDraggableIndex !== undefined
