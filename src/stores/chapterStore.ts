@@ -26,5 +26,39 @@ export const useChapterStore = defineStore('chapter', {
         (chapter) => chapter.id !== chapterId
       );
     },
+    exchangeChapter(oldIndex: number, newIndex: number) {
+      if (oldIndex === newIndex) return;
+
+      const oldChapter = this.chapters[oldIndex];
+      const newChapter = this.chapters[newIndex];
+
+      let order;
+
+      if (oldIndex > newIndex) {
+        if (newIndex === 0) {
+          order = newChapter.order / 2;
+        } else {
+          order = (newChapter.order + this.chapters[newIndex - 1].order) / 2;
+        }
+
+        oldChapter.order = order;
+
+        this.chapters.splice(oldIndex, 1);
+        this.chapters.splice(newIndex, 0, oldChapter);
+      } else {
+        if (newIndex === this.chapters.length - 1) {
+          order = newChapter.order + 100;
+        } else {
+          order = (newChapter.order + this.chapters[newIndex + 1].order) / 2;
+        }
+
+        oldChapter.order = order;
+
+        this.chapters.splice(newIndex, 0, oldChapter);
+        this.chapters.splice(oldIndex, 1);
+      }
+
+      console.log('hr1');
+    },
   },
 });

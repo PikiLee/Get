@@ -237,11 +237,20 @@ function addChapterPrompt() {
 
 // drag
 onMounted(() => {
-  const sortable = new Sortable(
+  new Sortable(
     document.querySelector('#chapters-draggable-container') as HTMLElement,
     {
-      onStart: function (evt) {
-        console.log(evt);
+      onEnd: function (evt) {
+        if (
+          evt.oldDraggableIndex !== undefined &&
+          evt.newDraggableIndex !== undefined
+        ) {
+          chapterService.exchangeOrder(
+            courseId,
+            evt.newDraggableIndex,
+            evt.oldDraggableIndex
+          );
+        }
       },
       handle: '.my-handle',
       draggable: '.chapter-card-draggable',

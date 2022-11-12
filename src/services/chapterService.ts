@@ -104,6 +104,7 @@ const updateChapter = async (
     name?: string;
     stage?: string;
     lastDate?: number;
+    order?: number;
   }
 ) => {
   try {
@@ -137,9 +138,35 @@ const deleteChapter = async (courseId: string, chapterId: string) => {
   }
 };
 
+const exchangeOrder = async (
+  courseId: string,
+  oldIndex: number,
+  newIndex: number
+) => {
+  if (oldIndex === newIndex) return;
+
+  try {
+    const chapterStore = useChapterStore();
+    const oldChapter = chapterStore.chapters[oldIndex];
+    const newChapter = chapterStore.chapters[newIndex];
+
+    chapterStore.exchangeChapter(oldIndex, newIndex);
+
+    await updateChapter(courseId, oldChapter.id, {
+      order: oldChapter.order,
+    });
+    await updateChapter(courseId, newChapter.id, {
+      order: newChapter.order,
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
 export default {
   postChapter,
   fetchChapters,
   updateChapter,
   deleteChapter,
+  exchangeOrder,
 };
