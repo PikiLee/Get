@@ -47,6 +47,19 @@
               >
               </q-select> </q-popup-edit
           ></q-item-section>
+          <q-item-section side>
+            <q-chip
+              v-if="
+                chapter.lastDate +
+                  stages[chapter.stage].waitDays * 1000 * 60 * 60 * 24 <
+                Date.now()
+              "
+              color="primary"
+              text-color="white"
+              >今日需复习</q-chip
+            >
+            <q-chip v-else>未到复习时间</q-chip>
+          </q-item-section>
           <q-item-section>
             <h5 class="text-center q-ma-none">
               {{ chapter.name }}
@@ -263,7 +276,6 @@ onMounted(() => {
     document.querySelector('#chapters-draggable-container') as HTMLElement,
     {
       onEnd: function (evt) {
-        console.log(evt);
         if (
           evt.oldDraggableIndex !== undefined &&
           evt.newDraggableIndex !== undefined

@@ -57,8 +57,6 @@ export const useChapterStore = defineStore('chapter', {
         this.chapters.splice(newIndex + 1, 0, oldChapter);
         this.chapters.splice(oldIndex, 1);
       }
-
-      console.log('hr1');
     },
     updateChapter(chapterId: string, date: number) {
       this.chapters.forEach((chapter) => {
