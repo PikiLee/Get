@@ -4,7 +4,7 @@
       <q-item-label>选择头像</q-item-label>
       <div class="row">
         <q-item
-          class="col-4"
+          class="col-xs-6 col-md-4"
           tag="label"
           v-ripple
           v-for="info in options"
