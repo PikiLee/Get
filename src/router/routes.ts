@@ -1,5 +1,7 @@
+import { useCourseStore } from 'src/stores/courseStore';
 import { RouteRecordRaw } from 'vue-router';
 import chapterService from 'src/services/chapterService';
+import courseService from 'src/services/courseService';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -11,6 +13,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/IndexPage.vue'),
         name: 'home',
         meta: { requiresAuth: true },
+        beforeEnter: () => {
+          const courseStore = useCourseStore();
+          if (courseStore.courses.length === 0) {
+            courseService.fetchCourses();
+          }
+        },
       },
       {
         path: 'course/:courseId',

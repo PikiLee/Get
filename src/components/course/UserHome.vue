@@ -129,12 +129,6 @@ const courseStore = useCourseStore();
 
 const $q = useQuasar();
 
-onBeforeMount(() => {
-  if (courseStore.courses.length === 0) {
-    courseService.fetchCourses();
-  }
-});
-
 const displayOptions = reactive({
   showFinished: true,
   showArchived: true,

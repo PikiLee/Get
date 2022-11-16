@@ -1,6 +1,6 @@
 import { useUserStore } from './../stores/userStore';
 import { NewCourse, Course } from './../types/course';
-import { db } from './firebase';
+import { auth, db } from './firebase';
 import {
   collection,
   addDoc,
@@ -14,8 +14,6 @@ import {
 } from 'firebase/firestore';
 import { useCourseStore } from 'src/stores/courseStore';
 import { LoadingBar } from 'quasar';
-
-const courseStore = useCourseStore();
 
 const getDocRef = (courseId: string) => {
   try {
@@ -34,14 +32,14 @@ const fetchCourses = async (options?: { showLoading: boolean }) => {
       LoadingBar.start();
     }
 
-    const userStore = useUserStore();
-    if (!userStore.user) throw Error;
-    const q = query(collection(db, 'users', userStore.user.id, 'courses'));
+    const courseStore = useCourseStore();
+
+    if (!auth.currentUser) throw Error;
+    const q = query(collection(db, 'users', auth.currentUser.uid, 'courses'));
 
     const querySnapshot = await getDocs(q);
     const courses: Course[] = [];
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
       const course = {
         ...doc.data(),
         id: doc.id,
@@ -81,6 +79,8 @@ const postCourse = (
       })
       .then((docSnap) => {
         if (docSnap.exists()) {
+          const courseStore = useCourseStore();
+
           const data = { ...docSnap.data(), id: docSnap.id } as Course;
           courseStore.addNewCourse(data);
         }
@@ -129,6 +129,7 @@ const updateCourse = async (
   await updateDoc(docRef, fieldsToChange);
 
   if (options?.updateStore) {
+    const courseStore = useCourseStore();
     courseStore.updateCourse(courseId, fieldsToChange);
   }
 

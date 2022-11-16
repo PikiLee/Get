@@ -200,7 +200,6 @@ function confirmDelete(chapterId: string) {
     persistent: true,
   })
     .onOk(() => {
-      // console.log('>>>> OK')
       chapterService
         .deleteChapter(courseId, chapterId, {
           showLoading: true,
