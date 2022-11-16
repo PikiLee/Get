@@ -103,7 +103,7 @@ const fetchChapters = async (
     }
 
     const chapterStore = useChapterStore();
-    if (chapterStore.chapters.length !== 0) return;
+    if (chapterStore.currentCourseId === courseId) return;
     const q = query(getChapterCollection(courseId));
 
     const querySnapshot = await getDocs(q);
@@ -116,6 +116,7 @@ const fetchChapters = async (
       } as Chapter);
     });
     chapterStore.setChapters(chapters);
+    chapterStore.currentCourseId = courseId;
 
     if (options?.showLoading) {
       LoadingBar.stop();

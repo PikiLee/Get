@@ -5,6 +5,7 @@ import { deleteUndefinedPropertiesOfObject } from 'src/utils/objectUtils';
 export const useChapterStore = defineStore('chapter', {
   state: () => ({
     chapters: [] as Chapter[],
+    currentCourseId: null as string | null,
   }),
   getters: {},
   actions: {
