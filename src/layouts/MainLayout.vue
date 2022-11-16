@@ -98,13 +98,6 @@
     <q-page-container>
       <div class="relative-position">
         <q-img src="../assets/bg/book.jpg" height="15rem" />
-        <div
-          class="row no-wrap text-white justify-between absolute-bottom q-pa-sm"
-        >
-          <time class="text-subtitle1">{{
-            date.formatDate(Date.now(), 'YYYY-MM-DD')
-          }}</time>
-        </div>
       </div>
       <router-view />
     </q-page-container>
