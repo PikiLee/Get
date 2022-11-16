@@ -32,9 +32,16 @@
           <q-menu>
             <div class="row no-wrap q-pa-md">
               <div class="column">
-                <div class="text-h6 q-mb-md">Settings</div>
-                <!-- <q-toggle v-model="mobileData" label="Use Mobile Data" />
-                <q-toggle v-model="bluetooth" label="Bluetooth" /> -->
+                <div class="text-h6 q-mb-md row justify-between items-center">
+                  <span class="col-6">设置</span>
+                  <q-btn
+                    icon="chevron_right"
+                    flat
+                    class="col-6"
+                    :to="{ name: 'setting' }"
+                  ></q-btn>
+                </div>
+                <q-toggle v-model="isDarkMode" label="暗黑模式" />
               </div>
 
               <q-separator vertical inset class="q-mx-lg" />
@@ -108,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { useUserStore } from 'src/stores/userStore';
 import userService from 'src/services/userService';
@@ -142,4 +149,11 @@ const logOut = () => {
       });
     });
 };
+
+// Dark Mode
+const isDarkMode = ref(false);
+
+watch(isDarkMode, (newValue) => {
+  $q.dark.set(newValue);
+});
 </script>
