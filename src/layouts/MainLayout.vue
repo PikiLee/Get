@@ -97,7 +97,10 @@
 
     <q-page-container>
       <div class="relative-position">
-        <q-img src="../assets/bg/book.jpg" height="15rem" />
+        <q-img
+          src="https://source.unsplash.com/collection/1277197/500x300/?sig=99"
+          height="15rem"
+        />
       </div>
       <router-view />
     </q-page-container>
