@@ -1,5 +1,6 @@
 import { Chapter } from './../types/chapter';
 import { defineStore } from 'pinia';
+import { deleteUndefinedPropertiesOfObject } from 'src/utils/objectUtils';
 
 export const useChapterStore = defineStore('chapter', {
   state: () => ({
@@ -58,10 +59,19 @@ export const useChapterStore = defineStore('chapter', {
         this.chapters.splice(oldIndex, 1);
       }
     },
-    updateChapter(chapterId: string, date: number) {
+    updateChapter(
+      chapterId: string,
+      fields: {
+        name?: string;
+        stage?: string;
+        lastDate?: number;
+        order?: number;
+      }
+    ) {
+      const fieldsToChange = deleteUndefinedPropertiesOfObject(fields);
       this.chapters.forEach((chapter) => {
         if (chapter.id === chapterId) {
-          chapter.lastDate = date;
+          Object.assign(chapter, fieldsToChange);
         }
       });
     },

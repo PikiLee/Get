@@ -107,6 +107,9 @@ const updateChapter = async (
     stage?: string;
     lastDate?: number;
     order?: number;
+  },
+  options?: {
+    updateStore?: boolean;
   }
 ) => {
   try {
@@ -121,6 +124,10 @@ const updateChapter = async (
     }
 
     const res = await updateDoc(docRef, fieldsToChange);
+
+    if (options?.updateStore) {
+      chapterStore.updateChapter(chapterId, fieldsToChange);
+    }
     return res;
   } catch (err) {
     throw err;

@@ -35,7 +35,7 @@
               v-slot="scope"
               auto-save
               @save="(value: string) => {
-            chapterService.updateChapter(courseId, chapter.id, {stage: value})
+            chapterService.updateChapter(courseId, chapter.id, {stage: value, lastDate: Date.now()}, {updateStore: true})
           }"
             >
               <q-select
@@ -91,10 +91,9 @@
                 auto-save
                 @save="
                   (value: string) => {
-                    chapterStore.updateChapter(chapter.id, date.extractDate(value, 'YYYY/MM/DD').valueOf())
                     chapterService.updateChapter(courseId, chapter.id, {
                       lastDate: date.extractDate(value, 'YYYY/MM/DD').valueOf(),
-                    });
+                    }, {updateStore: true});
                   }
                 "
               >
