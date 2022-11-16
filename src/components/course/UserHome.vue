@@ -35,7 +35,7 @@
       <div class="col-xs-12 col-sm-6 col-md-3">
         <q-card :style="{ width: '100%' }">
           <q-img
-            src="https://placeimg.com/500/300/nature"
+            :src="`https://source.unsplash.com/collection/1277197/500x300/?sig=${props.row.coverId}`"
             class="col-xs-5 rounded-borders"
             :ratio="16 / 9"
           >
@@ -107,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, computed, reactive } from 'vue';
+import { onBeforeMount, computed, reactive, ref } from 'vue';
 import courseService from '../../services/courseService';
 import { useQuasar } from 'quasar';
 import { useCourseStore } from 'src/stores/courseStore';

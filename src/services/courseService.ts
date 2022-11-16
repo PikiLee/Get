@@ -50,6 +50,7 @@ const postCourse = (newCourse: NewCourse) => {
     return addDoc(collection(db, 'users', userStore.user.id, 'courses'), {
       ...newCourse,
       createdAt: serverTimestamp(),
+      coverId: Math.floor(Math.random() * 1000),
     })
       .then((docRef) => {
         return getDoc(docRef);
@@ -73,6 +74,10 @@ const updateCourse = async (
   fields: {
     status?: number;
     name?: string;
+    coverId?: number;
+  },
+  options?: {
+    updateStore: boolean;
   }
 ) => {
   const userStore = useUserStore();
@@ -81,6 +86,7 @@ const updateCourse = async (
   const fieldsToChange = {} as {
     status?: number;
     name?: string;
+    coverId?: number;
   };
   if (fields.name) {
     fieldsToChange.name = fields.name;
@@ -89,11 +95,26 @@ const updateCourse = async (
     fieldsToChange.status = fields.status;
   }
 
-  return await updateDoc(docRef, fieldsToChange);
+  await updateDoc(docRef, fieldsToChange);
+
+  if (options?.updateStore) {
+    courseStore.updateCourse(courseId, fieldsToChange);
+  }
+};
+
+const getNewCover = (courseId: string, options: { updateStore: boolean }) => {
+  return updateCourse(
+    courseId,
+    {
+      coverId: Math.floor(Math.random() * 1000),
+    },
+    options
+  );
 };
 
 export default {
   postCourse,
   fetchCourses,
   updateCourse,
+  getNewCover,
 };

@@ -11,4 +11,11 @@ export interface NewCourse {
 export interface Course extends NewCourse {
   id: string;
   createdAt: Date;
+  coverId: number;
+}
+
+export interface CourseFieldsToChange {
+  status?: number;
+  name?: string;
+  coverId?: number;
 }

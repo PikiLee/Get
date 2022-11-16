@@ -1,4 +1,5 @@
-import { Course } from './../types/course';
+import { deleteUndefinedPropertiesOfObject } from 'src/utils/objectUtils';
+import { Course, CourseFieldsToChange } from './../types/course';
 import { defineStore } from 'pinia';
 
 export const useCourseStore = defineStore('course', {
@@ -19,8 +20,13 @@ export const useCourseStore = defineStore('course', {
     addNewCourse(course: Course) {
       this.courses.unshift(course);
     },
-    // updateCourse() {
-
-    // }
+    updateCourse(courseId: string, fields: CourseFieldsToChange) {
+      const fieldsToChange = deleteUndefinedPropertiesOfObject(fields);
+      this.courses.forEach((course) => {
+        if (course.id === courseId) {
+          Object.assign(course, fieldsToChange);
+        }
+      });
+    },
   },
 });
