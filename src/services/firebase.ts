@@ -29,6 +29,9 @@ onAuthStateChanged(auth, (user) => {
     userStore.user = null;
   }
 });
-connectAuthEmulator(auth, 'http://localhost:9099');
-connectStorageEmulator(storage, 'localhost', 9199);
-connectFirestoreEmulator(db, 'localhost', 8080);
+
+if (import.meta.env.DEV) {
+  connectAuthEmulator(auth, 'http://localhost:9099');
+  connectStorageEmulator(storage, 'localhost', 9199);
+  connectFirestoreEmulator(db, 'localhost', 8080);
+}
