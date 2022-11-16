@@ -27,7 +27,8 @@
                   floating
                   v-if="
                     info.type === 'custom' &&
-                    info.value !== userStore.user?.icon.fullPath
+                    info.value !== userStore.user?.icon.fullPath &&
+                    info.value !== value
                   "
                   :style="{ cursor: 'pointer' }"
                   @click.stop.prevent="deleteIcon(info.value)"

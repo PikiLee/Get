@@ -12,7 +12,7 @@
     ></BaseInput>
     <BaseInput label="密码 *" name="password" type="password"></BaseInput>
     <div class="row justify-center">
-      <q-btn label="登录" color="primary"></q-btn>
+      <q-btn label="登录" color="primary" @click="onSubmit"></q-btn>
     </div>
   </div>
 </template>
@@ -22,6 +22,7 @@ import BaseInput from '../BaseInput.vue';
 import { object, string } from 'yup';
 import userService from 'src/services/userService';
 import { useForm } from 'vee-validate';
+import { useRouter } from 'vue-router';
 
 // email form
 const userSchema = object({
@@ -46,11 +47,24 @@ const userSchema = object({
   password: string().min(12, '密码至少为12位'),
 });
 
-useForm<{ email: string }>({
+const { handleSubmit } = useForm<{ email: string; password: string }>({
   validationSchema: userSchema,
   initialValues: {
     email: '',
+    password: '',
   },
+});
+
+const router = useRouter();
+const onSubmit = handleSubmit((values) => {
+  userService
+    .signIn({
+      email: values.email,
+      password: values.password,
+    })
+    .then(() => {
+      router.push({ name: 'home' });
+    });
 });
 </script>
 

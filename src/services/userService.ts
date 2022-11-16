@@ -134,10 +134,8 @@ const canUserSignInWithEmailPassword = (email: string) => {
       signInMethods.indexOf(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD) !=
       -1
     ) {
-      console.log('hr1');
       return true;
     }
-    console.log('hr2');
     return false;
   });
 };

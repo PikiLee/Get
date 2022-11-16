@@ -33,7 +33,17 @@
     </template>
     <template v-slot:item="props">
       <div class="col-xs-12 col-sm-6 col-md-3">
-        <q-card :style="{ width: '100%' }">
+        <q-card :style="{ width: '100%' }" class="relative-position">
+          <q-btn
+            round
+            flat
+            color="white"
+            icon="delete"
+            class="absolute-top-right"
+            @click="deleteCourse(props.row.id)"
+            :style="{ zIndex: 100 }"
+          >
+          </q-btn>
           <q-img
             :src="`https://source.unsplash.com/collection/1277197/500x300/?sig=${props.row.coverId}`"
             class="col-xs-5 rounded-borders"
@@ -107,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, computed, reactive } from 'vue';
+import { computed, reactive } from 'vue';
 import courseService from '../../services/courseService';
 import { useQuasar } from 'quasar';
 import { useCourseStore } from 'src/stores/courseStore';
@@ -118,12 +128,6 @@ const router = useRouter();
 const courseStore = useCourseStore();
 
 const $q = useQuasar();
-
-onBeforeMount(() => {
-  if (courseStore.courses.length === 0) {
-    courseService.fetchCourses();
-  }
-});
 
 const displayOptions = reactive({
   showFinished: true,
@@ -173,10 +177,15 @@ const addCourse = () => {
     persistent: true,
   }).onOk((data) => {
     courseService
-      .postCourse({
-        name: data,
-        status: 0,
-      })
+      .postCourse(
+        {
+          name: data,
+          status: 0,
+        },
+        {
+          showLoading: true,
+        }
+      )
       .then(() => {
         $q.notify({
           message: '添加成功',
@@ -194,6 +203,27 @@ const addCourse = () => {
 
 const navToCourse = (courseId: number) => {
   router.push({ name: 'course', params: { courseId } });
+};
+
+// delete course
+const deleteCourse = (courseId: string) => {
+  courseService
+    .deleteCourse(courseId, {
+      updateStore: true,
+      showLoading: true,
+    })
+    .then(() => {
+      $q.notify({
+        message: '删除成功',
+        color: 'positive',
+      });
+    })
+    .catch((err) => {
+      $q.notify({
+        message: '删除失败:' + err,
+        color: 'negative',
+      });
+    });
 };
 </script>
 

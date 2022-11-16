@@ -1,6 +1,6 @@
 import { useUserStore } from './../stores/userStore';
 import { NewCourse, Course } from './../types/course';
-import { db } from './firebase';
+import { auth, db } from './firebase';
 import {
   collection,
   addDoc,
@@ -10,23 +10,36 @@ import {
   updateDoc,
   doc,
   serverTimestamp,
+  deleteDoc,
 } from 'firebase/firestore';
 import { useCourseStore } from 'src/stores/courseStore';
 import { LoadingBar } from 'quasar';
 
-const courseStore = useCourseStore();
-
-const fetchCourses = async () => {
+const getDocRef = (courseId: string) => {
   try {
-    LoadingBar.start();
     const userStore = useUserStore();
-    if (!userStore.user) throw Error;
-    const q = query(collection(db, 'users', userStore.user.id, 'courses'));
+    if (!userStore.user) throw 'No logged in user.';
+
+    return doc(db, 'users', userStore.user.id, 'courses', courseId);
+  } catch (err) {
+    throw err;
+  }
+};
+
+const fetchCourses = async (options?: { showLoading: boolean }) => {
+  try {
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
+    const courseStore = useCourseStore();
+
+    if (!auth.currentUser) throw Error;
+    const q = query(collection(db, 'users', auth.currentUser.uid, 'courses'));
 
     const querySnapshot = await getDocs(q);
     const courses: Course[] = [];
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
       const course = {
         ...doc.data(),
         id: doc.id,
@@ -35,18 +48,27 @@ const fetchCourses = async () => {
       courses.push(course);
     });
     courseStore.setCourses(courses);
-    LoadingBar.stop();
+
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
   } catch (err) {
     console.log(err);
     throw err;
   }
 };
 
-const postCourse = (newCourse: NewCourse) => {
+const postCourse = (
+  newCourse: NewCourse,
+  options?: { showLoading: boolean }
+) => {
   const userStore = useUserStore();
 
   if (userStore.user) {
-    LoadingBar.start();
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
     return addDoc(collection(db, 'users', userStore.user.id, 'courses'), {
       ...newCourse,
       createdAt: serverTimestamp(),
@@ -57,12 +79,16 @@ const postCourse = (newCourse: NewCourse) => {
       })
       .then((docSnap) => {
         if (docSnap.exists()) {
+          const courseStore = useCourseStore();
+
           const data = { ...docSnap.data(), id: docSnap.id } as Course;
           courseStore.addNewCourse(data);
         }
       })
       .finally(() => {
-        LoadingBar.stop();
+        if (options?.showLoading) {
+          LoadingBar.stop();
+        }
       });
   } else {
     return Promise.reject();
@@ -77,9 +103,14 @@ const updateCourse = async (
     coverId?: number;
   },
   options?: {
-    updateStore: boolean;
+    updateStore?: boolean;
+    showLoading?: boolean;
   }
 ) => {
+  if (options?.showLoading) {
+    LoadingBar.start();
+  }
+
   const userStore = useUserStore();
   if (!userStore.user) return Promise.reject();
   const docRef = doc(db, 'users', userStore.user.id, 'courses', courseId);
@@ -98,18 +129,61 @@ const updateCourse = async (
   await updateDoc(docRef, fieldsToChange);
 
   if (options?.updateStore) {
+    const courseStore = useCourseStore();
     courseStore.updateCourse(courseId, fieldsToChange);
+  }
+
+  if (options?.showLoading) {
+    LoadingBar.stop();
   }
 };
 
-const getNewCover = (courseId: string, options: { updateStore: boolean }) => {
+const getNewCover = (
+  courseId: string,
+  options?: { updateStore?: boolean; showLoading?: boolean }
+) => {
+  if (options?.showLoading) {
+    LoadingBar.start();
+  }
+
   return updateCourse(
     courseId,
     {
       coverId: Math.floor(Math.random() * 1000),
     },
     options
-  );
+  ).finally(() => {
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
+  });
+};
+
+const deleteCourse = async (
+  courseId: string,
+  options: {
+    updateStore: boolean;
+    showLoading: boolean;
+  }
+) => {
+  try {
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
+    await deleteDoc(getDocRef(courseId));
+
+    if (options?.updateStore) {
+      const courseStore = useCourseStore();
+      courseStore.deleteCourse(courseId);
+    }
+  } catch (err) {
+    throw err;
+  } finally {
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
+  }
 };
 
 export default {
@@ -117,4 +191,5 @@ export default {
   fetchCourses,
   updateCourse,
   getNewCover,
+  deleteCourse,
 };

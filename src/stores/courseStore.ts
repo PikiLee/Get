@@ -28,5 +28,10 @@ export const useCourseStore = defineStore('course', {
         }
       });
     },
+    deleteCourse(courseId: string) {
+      const index = this.courses.findIndex((course) => course.id === courseId);
+
+      this.courses.splice(index, 1);
+    },
   },
 });
