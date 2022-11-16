@@ -109,7 +109,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { date, useQuasar } from 'quasar';
+import { useQuasar } from 'quasar';
 import { useUserStore } from 'src/stores/userStore';
 import userService from 'src/services/userService';
 import { useRouter } from 'vue-router';

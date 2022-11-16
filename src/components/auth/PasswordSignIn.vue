@@ -46,7 +46,7 @@ const userSchema = object({
   password: string().min(12, '密码至少为12位'),
 });
 
-const { handleSubmit, values } = useForm<{ email: string }>({
+useForm<{ email: string }>({
   validationSchema: userSchema,
   initialValues: {
     email: '',
