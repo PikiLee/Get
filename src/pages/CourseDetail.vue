@@ -215,7 +215,7 @@ const stages = [
 
 function confirmDelete(chapterId: string) {
   $q.dialog({
-    title: 'Confirm',
+    title: '删除',
     message: '真的要删除该章节吗',
     cancel: true,
     persistent: true,
