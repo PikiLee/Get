@@ -1,4 +1,5 @@
 import { RouteRecordRaw } from 'vue-router';
+import chapterService from 'src/services/chapterService';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -16,6 +17,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/CourseDetail.vue'),
         name: 'course',
         meta: { requiresAuth: true },
+        beforeEnter: (to) => {
+          const courseId =
+            typeof to.params.courseId === 'string'
+              ? to.params.courseId
+              : to.params.courseId[0];
+
+          return chapterService.fetchChapters(courseId);
+        },
       },
       {
         path: 'setting',

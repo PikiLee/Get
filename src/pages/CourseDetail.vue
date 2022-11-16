@@ -145,9 +145,9 @@
 
 <script setup lang="ts">
 import { date, useQuasar } from 'quasar';
-import { onBeforeMount, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import chapterService from 'src/services/chapterService';
-import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useChapterStore } from './../stores/chapterStore';
 import Sortable from 'sortablejs';
 
@@ -158,14 +158,6 @@ const courseId =
   typeof route.params.courseId === 'string'
     ? route.params.courseId
     : route.params.courseId[0];
-
-onBeforeMount(() => {
-  chapterService.fetchChapters(courseId);
-});
-
-onBeforeRouteUpdate(() => {
-  chapterService.fetchChapters(courseId);
-});
 
 const stages = [
   {
