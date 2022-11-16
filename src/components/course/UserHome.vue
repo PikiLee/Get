@@ -107,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, computed, reactive, ref } from 'vue';
+import { onBeforeMount, computed, reactive } from 'vue';
 import courseService from '../../services/courseService';
 import { useQuasar } from 'quasar';
 import { useCourseStore } from 'src/stores/courseStore';

@@ -36,11 +36,6 @@ const routes: RouteRecordRaw[] = [
             component: () => import('pages/FinishAuth.vue'),
             name: 'finishAuth',
           },
-          {
-            path: 'logIn',
-            component: () => import('pages/LogIn.vue'),
-            name: 'logIn',
-          },
         ],
       },
     ],
