@@ -1,5 +1,7 @@
 .vscode/
-
+.env*
+*debug.log
+.firebaserc
 
 .DS_Store
 .thumbs.db
