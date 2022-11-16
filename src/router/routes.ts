@@ -27,14 +27,14 @@ const routes: RouteRecordRaw[] = [
         path: 'auth',
         children: [
           {
+            path: 'signUp/finishAuth',
+            component: () => import('pages/FinishAuth.vue'),
+            name: 'finishAuth',
+          },
+          {
             path: 'signUp',
             component: () => import('pages/SignUp.vue'),
             name: 'signUp',
-          },
-          {
-            path: 'finishAuth',
-            component: () => import('pages/FinishAuth.vue'),
-            name: 'finishAuth',
           },
         ],
       },

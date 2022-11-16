@@ -104,7 +104,7 @@ const signIn = (signInInfo: SignInInfo) => {
 
 const signInOrLogInViaEmailLink = (email: string) => {
   const actionCodeSettings = {
-    url: 'http://localhost:9000/#/auth/finishAuth/',
+    url: window.location.href + '/finishAuth/',
     handleCodeInApp: true,
   };
 
