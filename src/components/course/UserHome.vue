@@ -173,10 +173,15 @@ const addCourse = () => {
     persistent: true,
   }).onOk((data) => {
     courseService
-      .postCourse({
-        name: data,
-        status: 0,
-      })
+      .postCourse(
+        {
+          name: data,
+          status: 0,
+        },
+        {
+          showLoading: true,
+        }
+      )
       .then(() => {
         $q.notify({
           message: '添加成功',

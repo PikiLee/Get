@@ -51,10 +51,18 @@ const getChapterDoc = (courseId: string, chapterId: string) => {
   );
 };
 
-const postChapter = async (courseId: string, newChapter: NewChapter) => {
-  // Add a new document with a generated id.
+const postChapter = async (
+  courseId: string,
+  newChapter: NewChapter,
+  options?: {
+    showLoading: boolean;
+  }
+) => {
   try {
-    LoadingBar.start();
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
     const chapterStore = useChapterStore();
     let order = orderInterval;
     if (chapterStore.chapters.length !== 0) {
@@ -74,15 +82,26 @@ const postChapter = async (courseId: string, newChapter: NewChapter) => {
       id: docSnap.id,
       createdAt: docSnap.data()?.createdAt.toDate(),
     } as Chapter);
-    LoadingBar.stop();
+
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
   } catch (err) {
     throw err;
   }
 };
 
-const fetchChapters = async (courseId: string) => {
+const fetchChapters = async (
+  courseId: string,
+  options?: {
+    showLoading: boolean;
+  }
+) => {
   try {
-    LoadingBar.start();
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
     const chapterStore = useChapterStore();
     if (chapterStore.chapters.length !== 0) return;
     const q = query(getChapterCollection(courseId));
@@ -97,7 +116,10 @@ const fetchChapters = async (courseId: string) => {
       } as Chapter);
     });
     chapterStore.setChapters(chapters);
-    LoadingBar.stop();
+
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
   } catch (err) {
     console.log(err);
     throw err;
@@ -115,9 +137,14 @@ const updateChapter = async (
   },
   options?: {
     updateStore?: boolean;
+    showLoading?: boolean;
   }
 ) => {
   try {
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
     const chapterStore = useChapterStore();
 
     const docRef = getChapterDoc(courseId, chapterId);
@@ -135,20 +162,36 @@ const updateChapter = async (
     if (options?.updateStore) {
       chapterStore.updateChapter(chapterId, fieldsToChange);
     }
+
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
+
     return res;
   } catch (err) {
     throw err;
   }
 };
 
-const deleteChapter = async (courseId: string, chapterId: string) => {
+const deleteChapter = async (
+  courseId: string,
+  chapterId: string,
+  options?: {
+    showLoading?: boolean;
+  }
+) => {
   try {
-    LoadingBar.start();
-    const chapterStore = useChapterStore();
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
 
+    const chapterStore = useChapterStore();
     await deleteDoc(getChapterDoc(courseId, chapterId));
     chapterStore.deleteChapter(chapterId);
-    LoadingBar.stop();
+
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
   } catch (err) {
     throw err;
   }

@@ -16,9 +16,12 @@ import { LoadingBar } from 'quasar';
 
 const courseStore = useCourseStore();
 
-const fetchCourses = async () => {
+const fetchCourses = async (options?: { showLoading: boolean }) => {
   try {
-    LoadingBar.start();
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
     const userStore = useUserStore();
     if (!userStore.user) throw Error;
     const q = query(collection(db, 'users', userStore.user.id, 'courses'));
@@ -35,18 +38,27 @@ const fetchCourses = async () => {
       courses.push(course);
     });
     courseStore.setCourses(courses);
-    LoadingBar.stop();
+
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
   } catch (err) {
     console.log(err);
     throw err;
   }
 };
 
-const postCourse = (newCourse: NewCourse) => {
+const postCourse = (
+  newCourse: NewCourse,
+  options?: { showLoading: boolean }
+) => {
   const userStore = useUserStore();
 
   if (userStore.user) {
-    LoadingBar.start();
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
     return addDoc(collection(db, 'users', userStore.user.id, 'courses'), {
       ...newCourse,
       createdAt: serverTimestamp(),
@@ -62,7 +74,9 @@ const postCourse = (newCourse: NewCourse) => {
         }
       })
       .finally(() => {
-        LoadingBar.stop();
+        if (options?.showLoading) {
+          LoadingBar.stop();
+        }
       });
   } else {
     return Promise.reject();
@@ -77,9 +91,14 @@ const updateCourse = async (
     coverId?: number;
   },
   options?: {
-    updateStore: boolean;
+    updateStore?: boolean;
+    showLoading?: boolean;
   }
 ) => {
+  if (options?.showLoading) {
+    LoadingBar.start();
+  }
+
   const userStore = useUserStore();
   if (!userStore.user) return Promise.reject();
   const docRef = doc(db, 'users', userStore.user.id, 'courses', courseId);
@@ -100,16 +119,31 @@ const updateCourse = async (
   if (options?.updateStore) {
     courseStore.updateCourse(courseId, fieldsToChange);
   }
+
+  if (options?.showLoading) {
+    LoadingBar.stop();
+  }
 };
 
-const getNewCover = (courseId: string, options: { updateStore: boolean }) => {
+const getNewCover = (
+  courseId: string,
+  options?: { updateStore?: boolean; showLoading?: boolean }
+) => {
+  if (options?.showLoading) {
+    LoadingBar.start();
+  }
+
   return updateCourse(
     courseId,
     {
       coverId: Math.floor(Math.random() * 1000),
     },
     options
-  );
+  ).finally(() => {
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
+  });
 };
 
 export default {

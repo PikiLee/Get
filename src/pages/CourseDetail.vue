@@ -202,7 +202,9 @@ function confirmDelete(chapterId: string) {
     .onOk(() => {
       // console.log('>>>> OK')
       chapterService
-        .deleteChapter(courseId, chapterId)
+        .deleteChapter(courseId, chapterId, {
+          showLoading: true,
+        })
         .then(() => {
           $q.notify({
             message: '删除成功',
@@ -241,11 +243,17 @@ function addChapterPrompt() {
   }).onOk((data) => {
     // console.log('>>>> OK, received', data)
     chapterService
-      .postChapter(courseId, {
-        name: data,
-        stage: 0,
-        lastDate: Date.now(),
-      })
+      .postChapter(
+        courseId,
+        {
+          name: data,
+          stage: 0,
+          lastDate: Date.now(),
+        },
+        {
+          showLoading: true,
+        }
+      )
       .then(() => {
         $q.notify({
           message: '添加成功',

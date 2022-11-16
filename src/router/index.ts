@@ -9,6 +9,7 @@ import {
 import routes from './routes';
 import { auth } from '../services/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { LoadingBar } from 'quasar';
 
 /*
  * If not building with SSR mode, you can
@@ -37,6 +38,7 @@ export default route(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach((to) => {
+    LoadingBar.start();
     return new Promise((resolve) => {
       onAuthStateChanged(auth, (user) => {
         if (to.meta.requiresAuth && !user) {
@@ -46,6 +48,10 @@ export default route(function (/* { store, ssrContext } */) {
         }
       });
     });
+  });
+
+  Router.afterEach(() => {
+    LoadingBar.stop();
   });
 
   return Router;
