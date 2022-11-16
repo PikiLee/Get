@@ -10,11 +10,23 @@ import {
   updateDoc,
   doc,
   serverTimestamp,
+  deleteDoc,
 } from 'firebase/firestore';
 import { useCourseStore } from 'src/stores/courseStore';
 import { LoadingBar } from 'quasar';
 
 const courseStore = useCourseStore();
+
+const getDocRef = (courseId: string) => {
+  try {
+    const userStore = useUserStore();
+    if (!userStore.user) throw 'No logged in user.';
+
+    return doc(db, 'users', userStore.user.id, 'courses', courseId);
+  } catch (err) {
+    throw err;
+  }
+};
 
 const fetchCourses = async (options?: { showLoading: boolean }) => {
   try {
@@ -146,9 +158,37 @@ const getNewCover = (
   });
 };
 
+const deleteCourse = async (
+  courseId: string,
+  options: {
+    updateStore: boolean;
+    showLoading: boolean;
+  }
+) => {
+  try {
+    if (options?.showLoading) {
+      LoadingBar.start();
+    }
+
+    await deleteDoc(getDocRef(courseId));
+
+    if (options?.updateStore) {
+      const courseStore = useCourseStore();
+      courseStore.deleteCourse(courseId);
+    }
+  } catch (err) {
+    throw err;
+  } finally {
+    if (options?.showLoading) {
+      LoadingBar.stop();
+    }
+  }
+};
+
 export default {
   postCourse,
   fetchCourses,
   updateCourse,
   getNewCover,
+  deleteCourse,
 };
