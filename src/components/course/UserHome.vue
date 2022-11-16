@@ -207,22 +207,40 @@ const navToCourse = (courseId: number) => {
 
 // delete course
 const deleteCourse = (courseId: string) => {
-  courseService
-    .deleteCourse(courseId, {
-      updateStore: true,
-      showLoading: true,
+  $q.dialog({
+    title: '删除',
+    message: '确定要删除这门课吗?',
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(() => {
+      // console.log('>>>> OK')
     })
-    .then(() => {
-      $q.notify({
-        message: '删除成功',
-        color: 'positive',
-      });
+    .onOk(() => {
+      // console.log('>>>> second OK catcher')
+      courseService
+        .deleteCourse(courseId, {
+          updateStore: true,
+          showLoading: true,
+        })
+        .then(() => {
+          $q.notify({
+            message: '删除成功',
+            color: 'positive',
+          });
+        })
+        .catch((err) => {
+          $q.notify({
+            message: '删除失败:' + err,
+            color: 'negative',
+          });
+        });
     })
-    .catch((err) => {
-      $q.notify({
-        message: '删除失败:' + err,
-        color: 'negative',
-      });
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
     });
 };
 </script>
