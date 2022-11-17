@@ -47,6 +47,7 @@ import {
 import EmailLink from 'src/components/auth/EmailLink.vue';
 import PasswordSignIn from 'src/components/auth/PasswordSignIn.vue';
 import { useRouter } from 'vue-router';
+import { auth } from 'src/services/firebase';
 
 const isPasswordMethod = ref(false);
 
@@ -60,16 +61,36 @@ const useEmailLinkMethod = () => {
 // google auth
 const signInWithGoogle = () => {
   const provider = new GoogleAuthProvider();
-  const auth = getAuth();
   signInWithRedirect(auth, provider);
 };
 
 const router = useRouter();
 onBeforeMount(() => {
-  const auth = getAuth();
-  getRedirectResult(auth).then(() => {
-    router.push({ name: 'home' });
-  });
+  // onAuthStateChanged(auth, (user) => {
+  //   if (user) {
+  //     getRedirectResult(auth)
+  //       .then(() => {
+  //         router.push({ name: 'home' });
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   }
+  // });
+  // const auth = getAuth();
+  getRedirectResult(auth)
+    .then(() => {
+      console.log('hr1');
+      router.push({ name: 'home' });
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode);
+      console.log(errorMessage);
+      // ...
+    });
 });
 </script>
 
