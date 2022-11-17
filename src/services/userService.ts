@@ -42,12 +42,15 @@ const getUserProfile = async () => {
 
   if (user !== null) {
     const iconFullPath = user.photoURL ?? storageService.defaultIconFullPath;
+    const iconUrl = iconFullPath.match(/^http/)
+      ? iconFullPath
+      : await storageService.fetchDownloadURL(iconFullPath);
     const info: User = {
       id: user.uid,
       name: user.displayName || '快乐的小猫咪',
       email: user.email || '',
       icon: {
-        url: await storageService.fetchDownloadURL(iconFullPath),
+        url: iconUrl,
         fullPath: iconFullPath,
       },
       emailVerified: user.emailVerified,

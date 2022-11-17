@@ -65,30 +65,15 @@ const signInWithGoogle = () => {
 
 const router = useRouter();
 onBeforeMount(() => {
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     getRedirectResult(auth)
-  //       .then(() => {
-  //         router.push({ name: 'home' });
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //       });
-  //   }
-  // });
-  // const auth = getAuth();
   getRedirectResult(auth)
     .then(() => {
-      console.log('hr1');
       router.push({ name: 'home' });
     })
     .catch((error) => {
-      // Handle Errors here.
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log(errorCode);
       console.log(errorMessage);
-      // ...
     });
 });
 </script>
