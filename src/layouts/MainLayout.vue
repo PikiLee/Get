@@ -19,88 +19,11 @@
           >
         </q-toolbar-title>
 
-        <RouterLink
-          :to="{ name: 'signUp' }"
-          :style="{ textDecoration: 'none', color: 'white' }"
-          class="q-mr-md"
-          v-if="!userStore.isLoggedIn"
-          >注册/登录</RouterLink
-        >
-
-        <q-avatar v-if="userStore.user" :style="{ cursor: 'pointer' }">
-          <img :src="userStore.user?.icon.url" />
-          <q-menu>
-            <div class="row no-wrap q-pa-md">
-              <div class="column">
-                <div class="text-h6 q-mb-md row justify-between items-center">
-                  <span class="col-6">设置</span>
-                  <q-btn
-                    icon="chevron_right"
-                    flat
-                    class="col-6"
-                    :to="{ name: 'setting' }"
-                  ></q-btn>
-                </div>
-                <q-toggle v-model="isDark" label="暗黑模式" />
-              </div>
-
-              <q-separator vertical inset class="q-mx-lg" />
-
-              <div class="column items-center">
-                <q-avatar size="72px" v-if="userStore.user?.icon">
-                  <img :src="userStore.user?.icon.url" />
-                </q-avatar>
-
-                <div class="text-subtitle1 q-mt-md q-mb-xs">
-                  {{ userStore.user.name }}
-                </div>
-
-                <q-btn
-                  color="primary"
-                  label="退出"
-                  push
-                  size="sm"
-                  v-close-popup
-                  @click="logOut"
-                />
-              </div>
-            </div>
-          </q-menu>
-        </q-avatar>
+        <UserCard></UserCard>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item>
-          <q-item-section avatar>
-            <q-icon name="home"></q-icon>
-          </q-item-section>
-          <q-item-section
-            ><RouterLink
-              :to="{ path: '/' }"
-              :style="{ textDecoration: 'none', color: 'black' }"
-              >主页</RouterLink
-            ></q-item-section
-          >
-        </q-item>
-
-        <q-separator></q-separator>
-
-        <q-item>
-          <q-item-section avatar>
-            <q-icon name="settings"></q-icon>
-          </q-item-section>
-          <q-item-section
-            ><RouterLink
-              :to="{ name: 'setting' }"
-              :style="{ textDecoration: 'none', color: 'black' }"
-              >设置</RouterLink
-            ></q-item-section
-          >
-        </q-item>
-      </q-list>
-    </q-drawer>
+    <AppDrawer v-model="leftDrawerOpen"></AppDrawer>
 
     <q-page-container>
       <div class="relative-position">
@@ -115,52 +38,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { useQuasar } from 'quasar';
-import { useUserStore } from 'src/stores/userStore';
-import userService from 'src/services/userService';
-import { useRouter } from 'vue-router';
-import { useDark } from '@vueuse/core';
+import { ref } from 'vue';
+import UserCard from 'src/components/layout/UserCard.vue';
+import AppDrawer from 'src/components/layout/AppDrawer.vue';
 
 const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
-
-const userStore = useUserStore();
-const $q = useQuasar();
-const router = useRouter();
-const logOut = () => {
-  userService
-    .logOut()
-    .then(() => {
-      $q.notify({
-        message: '退出成功',
-        color: 'positive',
-      });
-      router.push({
-        name: 'signUp',
-      });
-    })
-    .catch(() => {
-      $q.notify({
-        message: '退出失败',
-        color: 'negative',
-      });
-    });
-};
-
-// Dark Mode
-const isDark = useDark();
-
-watch(
-  isDark,
-  (newValue) => {
-    $q.dark.set(newValue);
-  },
-  {
-    immediate: true,
-  }
-);
 </script>
