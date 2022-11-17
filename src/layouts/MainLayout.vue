@@ -41,7 +41,7 @@
                     :to="{ name: 'setting' }"
                   ></q-btn>
                 </div>
-                <q-toggle v-model="isDarkMode" label="暗黑模式" />
+                <q-toggle v-model="isDark" label="暗黑模式" />
               </div>
 
               <q-separator vertical inset class="q-mx-lg" />
@@ -120,6 +120,7 @@ import { useQuasar } from 'quasar';
 import { useUserStore } from 'src/stores/userStore';
 import userService from 'src/services/userService';
 import { useRouter } from 'vue-router';
+import { useDark } from '@vueuse/core';
 
 const leftDrawerOpen = ref(false);
 
@@ -151,9 +152,15 @@ const logOut = () => {
 };
 
 // Dark Mode
-const isDarkMode = ref(false);
+const isDark = useDark();
 
-watch(isDarkMode, (newValue) => {
-  $q.dark.set(newValue);
-});
+watch(
+  isDark,
+  (newValue) => {
+    $q.dark.set(newValue);
+  },
+  {
+    immediate: true,
+  }
+);
 </script>
