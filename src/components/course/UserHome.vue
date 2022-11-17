@@ -21,11 +21,11 @@
       <div class="row justify-between" :style="{ width: '100%' }">
         <div>
           <q-checkbox
-            v-model="displayOptions.showFinished"
+            v-model="courseSetting.showFinished"
             label="显示已完成的课程"
           />
           <q-checkbox
-            v-model="displayOptions.showArchived"
+            v-model="courseSetting.showArchived"
             label="显示搁置中的课程"
           />
         </div>
@@ -122,6 +122,7 @@ import courseService from '../../services/courseService';
 import { useQuasar } from 'quasar';
 import { useCourseStore } from 'src/stores/courseStore';
 import { useRouter } from 'vue-router';
+import { useStorage } from '@vueuse/core';
 
 const router = useRouter();
 
@@ -129,17 +130,12 @@ const courseStore = useCourseStore();
 
 const $q = useQuasar();
 
-const displayOptions = reactive({
-  showFinished: true,
-  showArchived: true,
-});
-
 const courses = computed(() => {
   return courseStore.courses.filter((course) => {
-    if (!displayOptions.showFinished && course.status === 1) {
+    if (!courseSetting.value.showFinished && course.status === 1) {
       return false;
     }
-    if (!displayOptions.showArchived && course.status === 2) {
+    if (!courseSetting.value.showArchived && course.status === 2) {
       return false;
     }
     return true;
@@ -243,6 +239,12 @@ const deleteCourse = (courseId: string) => {
       // console.log('I am triggered on both OK and Cancel')
     });
 };
+
+// showFinished and showArchived settings
+const courseSetting = useStorage('courseSetting', {
+  showFinished: true,
+  showArchived: true,
+});
 </script>
 
 <!-- <style scoped></style> -->
