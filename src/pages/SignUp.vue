@@ -39,7 +39,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import {
-  getAuth,
   signInWithRedirect,
   GoogleAuthProvider,
   getRedirectResult,
