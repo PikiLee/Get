@@ -6,32 +6,20 @@
     bordered
   >
     <q-list>
-      <q-item>
+      <q-item :to="{ name: 'home' }" :active="false">
         <q-item-section avatar>
           <q-icon name="home"></q-icon>
         </q-item-section>
-        <q-item-section
-          ><RouterLink
-            :to="{ path: '/' }"
-            :style="{ textDecoration: 'none', color: 'black' }"
-            >主页</RouterLink
-          ></q-item-section
-        >
+        <q-item-section> 主页 </q-item-section>
       </q-item>
 
       <q-separator></q-separator>
 
-      <q-item>
+      <q-item :to="{ name: 'setting' }" :active="false">
         <q-item-section avatar>
           <q-icon name="settings"></q-icon>
         </q-item-section>
-        <q-item-section
-          ><RouterLink
-            :to="{ name: 'setting' }"
-            :style="{ textDecoration: 'none', color: 'black' }"
-            >设置</RouterLink
-          ></q-item-section
-        >
+        <q-item-section>设置</q-item-section>
       </q-item>
     </q-list>
   </q-drawer>
