@@ -43,6 +43,7 @@ import {
   signInWithRedirect,
   GoogleAuthProvider,
   getRedirectResult,
+  onAuthStateChanged,
 } from 'firebase/auth';
 import EmailLink from 'src/components/auth/EmailLink.vue';
 import PasswordSignIn from 'src/components/auth/PasswordSignIn.vue';
@@ -67,8 +68,12 @@ const signInWithGoogle = () => {
 const router = useRouter();
 onBeforeMount(() => {
   const auth = getAuth();
-  getRedirectResult(auth).then(() => {
-    router.push({ name: 'home' });
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      getRedirectResult(auth).then(() => {
+        router.push({ name: 'home' });
+      });
+    }
   });
 });
 </script>
