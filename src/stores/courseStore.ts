@@ -6,7 +6,12 @@ export const useCourseStore = defineStore('course', {
   state: () => ({
     courses: [] as Course[],
   }),
-  getters: {},
+  getters: {
+    getCourseInfo: (state) => {
+      return (courseId: string) =>
+        state.courses.find((course) => course.id === courseId);
+    },
+  },
   actions: {
     setCourses(courses: Course[]) {
       this.courses = courses.sort((a, b) => {

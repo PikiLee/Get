@@ -1,6 +1,9 @@
 <template>
   <q-page class="q-pb-xl">
     <div>
+      <h2 class="text-h5 text-center">
+        {{ courseStore.getCourseInfo(courseId)?.name }}
+      </h2>
       <q-list bordered separator id="chapters-draggable-container">
         <q-item
           clickable
@@ -171,6 +174,7 @@ import chapterService from 'src/services/chapterService';
 import { useRoute } from 'vue-router';
 import { useChapterStore } from './../stores/chapterStore';
 import Sortable from 'sortablejs';
+import { useCourseStore } from 'src/stores/courseStore';
 
 const route = useRoute();
 const $q = useQuasar();
@@ -179,6 +183,7 @@ const courseId =
   typeof route.params.courseId === 'string'
     ? route.params.courseId
     : route.params.courseId[0];
+const courseStore = useCourseStore();
 
 const stages = [
   {
