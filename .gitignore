@@ -2,6 +2,7 @@
 .env*
 *debug.log
 .firebaserc
+emulators-storage/
 
 .DS_Store
 .thumbs.db

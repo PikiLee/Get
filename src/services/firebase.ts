@@ -33,5 +33,5 @@ onAuthStateChanged(auth, (user) => {
 if (import.meta.env.DEV) {
   connectAuthEmulator(auth, 'http://localhost:9099');
   connectStorageEmulator(storage, 'localhost', 9199);
-  connectFirestoreEmulator(db, 'localhost', 8080);
+  connectFirestoreEmulator(db, 'localhost', 8070);
 }

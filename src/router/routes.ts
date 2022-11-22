@@ -31,7 +31,11 @@ const routes: RouteRecordRaw[] = [
               ? to.params.courseId
               : to.params.courseId[0];
 
-          return chapterService.fetchChapters(courseId);
+          return new Promise((resolve) => {
+            chapterService.fetchChapters(courseId).then(() => {
+              resolve();
+            });
+          });
         },
       },
       {

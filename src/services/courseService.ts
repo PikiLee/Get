@@ -1,3 +1,4 @@
+import chapterService from 'src/services/chapterService';
 import { useUserStore } from './../stores/userStore';
 import { NewCourse, Course } from './../types/course';
 import { auth, db } from './firebase';
@@ -171,6 +172,7 @@ const deleteCourse = async (
       LoadingBar.start();
     }
 
+    await chapterService.deleteChaptersForACourse(courseId);
     await deleteDoc(getDocRef(courseId));
 
     if (options?.updateStore) {

@@ -13,7 +13,6 @@
         <q-tab-panels
           v-model="tab"
           animated
-          swipeable
           vertical
           transition-prev="jump-up"
           transition-next="jump-up"
