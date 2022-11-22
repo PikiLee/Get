@@ -121,6 +121,8 @@ const fetchChapters = async (
     if (options?.showLoading) {
       LoadingBar.stop();
     }
+
+    return chapters;
   } catch (err) {
     console.log(err);
     throw err;
@@ -223,10 +225,18 @@ const exchangeOrder = async (
   }
 };
 
+const deleteChaptersForACourse = async (courseId: string) => {
+  const chapters = await fetchChapters(courseId);
+  chapters?.forEach(async (chapter) => {
+    await deleteChapter(courseId, chapter.id);
+  });
+};
+
 export default {
   postChapter,
   fetchChapters,
   updateChapter,
   deleteChapter,
   exchangeOrder,
+  deleteChaptersForACourse,
 };
