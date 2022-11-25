@@ -56,9 +56,13 @@
             <div class="col-xs-6 col-md-2 row items-center justify-center">
               <q-chip
                 v-if="
-                  chapter.lastDate +
-                    stages[chapter.stage].waitDays * 1000 * 60 * 60 * 24 <
-                  Date.now()
+                  date.isSameDate(
+                    date.addToDate(new Date(chapter.lastDate), {
+                      days: stages[chapter.stage].waitDays,
+                    }),
+                    new Date(),
+                    'date'
+                  )
                 "
                 color="primary"
                 text-color="white"
@@ -116,11 +120,16 @@
             <div class="col-xs-6 col-md-1 row items-center justify-center">
               <q-item-label class="text-caption"> 下次复习时间 </q-item-label>
               {{
-                date.formatDate(
-                  chapter.lastDate +
-                    stages[chapter.stage].waitDays * 1000 * 60 * 60 * 24,
-                  'YYYY-MM-DD'
-                )
+                Math.max(
+                  date.getDateDiff(
+                    date.addToDate(new Date(chapter.lastDate), {
+                      days: stages[chapter.stage].waitDays,
+                    }),
+                    new Date(),
+                    'days'
+                  ),
+                  0
+                ) + '天后'
               }}
             </div>
 
