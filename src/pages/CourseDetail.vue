@@ -92,8 +92,8 @@
             </div>
 
             <!-- Last Date -->
-            <div class="col-xs-6 col-md-1 row items-center justify-center">
-              <q-item-label class="text-caption"> 上次复习时间 </q-item-label>
+            <div class="col-xs-6 col-md-1 text-center">
+              <q-item-label class="text-caption q-mb-md"> 上次复习时间 </q-item-label>
               <p class="q-ma-none">
                 {{ date.formatDate(chapter.lastDate, 'YYYY-MM-DD') }}
                 <q-tooltip anchor="top middle" self="bottom middle">
@@ -117,8 +117,10 @@
             </div>
 
             <!-- Next Date -->
-            <div class="col-xs-6 col-md-1 row items-center justify-center">
-              <q-item-label class="text-caption"> 下次复习时间 </q-item-label>
+            <div class="col-xs-6 col-md-1 text-center">
+              <q-item-label class="text-caption q-mb-md ">
+                下次复习时间
+              </q-item-label>
               <q-item-label>
                 {{
                   Math.max(
