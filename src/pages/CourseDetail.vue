@@ -119,18 +119,20 @@
             <!-- Next Date -->
             <div class="col-xs-6 col-md-1 row items-center justify-center">
               <q-item-label class="text-caption"> 下次复习时间 </q-item-label>
-              {{
-                Math.max(
-                  date.getDateDiff(
-                    date.addToDate(new Date(chapter.lastDate), {
-                      days: stages[chapter.stage].waitDays,
-                    }),
-                    new Date(),
-                    'days'
-                  ),
-                  0
-                ) + '天后'
-              }}
+              <q-item-label>
+                {{
+                  Math.max(
+                    date.getDateDiff(
+                      date.addToDate(new Date(chapter.lastDate), {
+                        days: stages[chapter.stage].waitDays,
+                      }),
+                      new Date(),
+                      'days'
+                    ),
+                    0
+                  ) + '天后'
+                }}
+              </q-item-label>
             </div>
 
             <!-- Progress Circle -->
